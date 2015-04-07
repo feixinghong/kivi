@@ -5,9 +5,10 @@ var vdom = require('../lib/vdom');
 var ATTACHED_CONTEXT = {flags: vdom.Component.ATTACHED};
 
 function injectBefore(parent, node, nextRef) {
-  vdom.create(node, ATTACHED_CONTEXT);
-  parent.insertBefore(node.ref, nextRef);
-  vdom.render(node, ATTACHED_CONTEXT);
+  var c = vdom.create(node, ATTACHED_CONTEXT);
+  parent.insertBefore(c.ref, nextRef);
+  vdom.render(c, ATTACHED_CONTEXT);
+  return c;
 }
 
 describe('render', function() {

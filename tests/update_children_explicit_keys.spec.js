@@ -5,9 +5,10 @@ var vdom = require('../lib/vdom.js');
 var ATTACHED_CONTEXT = {flags: vdom.Component.ATTACHED};
 
 function injectBefore(parent, node, nextRef) {
-  vdom.create(node, ATTACHED_CONTEXT);
-  parent.insertBefore(node.ref, nextRef);
-  vdom.render(node, ATTACHED_CONTEXT);
+  var c = vdom.create(node, ATTACHED_CONTEXT);
+  parent.insertBefore(c.ref, nextRef);
+  vdom.render(c, ATTACHED_CONTEXT);
+  return c;
 }
 
 function e(key, c) {
@@ -38,10 +39,10 @@ function checkSync(ax, bx) {
 
   var aDiv = document.createElement('div');
   var bDiv = document.createElement('div');
-  injectBefore(aDiv, a, null);
-  injectBefore(bDiv, b, null);
+  var ac = injectBefore(aDiv, a, null);
+  var bc = injectBefore(bDiv, b, null);
 
-  vdom.update(a, b, ATTACHED_CONTEXT);
+  vdom.update(ac, b, ATTACHED_CONTEXT);
 
   expect(aDiv.innerHTML).to.be.equal(bDiv.innerHTML);
 }
