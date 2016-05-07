@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Virtual DOM | kivi guide</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.6.7">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    
+    <link rel="prev" href="./02_components.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book"
+        data-level="3"
+        data-chapter-title="Virtual DOM"
+        data-filepath="03_virtual_dom.md"
+        data-basepath="."
+        data-revision="Sat May 07 2016 13:06:34 GMT+0600 (NOVT)"
+        data-innerlanguage="">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="01_getting_started.html">
+            
+                
+                    <a href="./01_getting_started.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Getting Started
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="02_components.html">
+            
+                
+                    <a href="./02_components.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Components
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="3" data-path="03_virtual_dom.html">
+            
+                
+                    <a href="./03_virtual_dom.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Virtual DOM
+                    </a>
+            
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >kivi guide</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="virtual-dom">Virtual DOM</h1>
+<p>Virtual DOM simplifies the way to manage DOM mutations, just describe how your component should look at any point in
+time and Virtual DOM reconciliation algorithm will make all necessary DOM operations to update component representation
+in a most efficient way.</p>
+<p>The basic Virtual DOM API that kivi provides is enough for most use cases. But when it isn&apos;t enough, kivi provides many
+advanced tools that can reduce Virtual DOM diffing overhead, and it will be quite hard to beat its performance without
+reimplementing similar algorithms.</p>
+<h2 id="basic-api">Basic API</h2>
+<h3 id="creating-virtual-dom-nodes">Creating Virtual DOM Nodes</h3>
+<h5 id="createvelementtagname-string-vnode"><code>createVElement(tagName: string): VNode</code></h5>
+<p>Creates a virtual node representing a HTML Element.</p>
+<h5 id="createvsvgelementtagname-string-vnode"><code>createVSvgElement(tagName: string): VNode</code></h5>
+<p>Creates a virtual node representing a SVG Element.</p>
+<h5 id="createvtextcontent-string-vnode"><code>createVText(content: string): VNode</code></h5>
+<p>Creates a virtual node representing a Text Node.</p>
+<h3 id="setting-vnode-properties">Setting VNode properties</h3>
+<p>VNode object provides different chained methods to set properties.</p>
+<p>For example:</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> e = createVElement(<span class="hljs-string">&quot;a&quot;</span>)
+  .attrs({
+    <span class="hljs-string">&quot;href&quot;</span>: <span class="hljs-string">&quot;localhost&quot;</span>,
+    <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Link to localhost&quot;</span>,
+  })
+  .children(<span class="hljs-string">&quot;Link to localhost&quot;</span>);
+</code></pre>
+<h5 id="attrsattrs-key-string-any"><code>attrs(attrs: {[key: string]: any})</code></h5>
+<p>Set HTML attributes.</p>
+<p>Attrs object should always have the same shape when creating virtual node representing the same element. To specify
+dynamic shape attributes use <code>dynamiShapeAttrs(attrs: {[key: string]: any})</code> method.</p>
+<h5 id="propsprops-key-string-any"><code>props(props: {[key: string]: any})</code></h5>
+<p>Set properties.</p>
+<p>Props object should always have the same shape when creating virtual node representing the same element. To specify
+dynamic shape properties use <code>dynamiShapeProps(props: {[key: string]: any})</code> method.</p>
+<p>When virtual node is mounted on top of existing HTML, all properties will be assigned during mounting phase.</p>
+<h5 id="stylestyle-string"><code>style(style: string)</code></h5>
+<p>Set style in CSS string format.</p>
+<h5 id="classnameclassname-string"><code>className(className: string)</code></h5>
+<p>Set class name.</p>
+<h5 id="childrenchildren-vnodestring"><code>children(children: VNode[]|string)</code></h5>
+<p>Set children.</p>
+<h5 id="trackbykeychildrenchildren-vnode"><code>trackByKeyChildren(children: VNode[])</code></h5>
+<p>Set children with enabled tracking by key, all children should have a key and it should be unique among its siblings.</p>
+<h5 id="keykey-any"><code>key(key: any)</code></h5>
+<p>Set key.</p>
+<p>Key should be unique among its siblings.</p>
+<p>When track by key is enabled, children reconciliation algorithm uses a key value to find virtual node in old children
+list that represented the same DOM node.</p>
+<h3 id="using-virtual-dom-from-components">Using Virtual DOM from Components</h3>
+<h5 id="createvroot-vnode"><code>createVRoot(): VNode</code></h5>
+<p>Creates a virtual root node that is used as a root element in component.</p>
+<h5 id="componentsyncnewroot-vnode-renderflags-number"><code>Component.sync(newRoot: VNode, renderFlags?: number)</code></h5>
+<p>Synchronize component&apos;s subtree with a new Virtual DOM tree.</p>
+<p>Render flags can be used in advanced use cases to perform shallow render, shallow update or both.</p>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="./02_components.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Components"><i class="fa fa-angle-left"></i></a>
+        
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

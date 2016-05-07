@@ -1,0 +1,311 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Components | kivi guide</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.6.7">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="./03_virtual_dom.html" />
+    
+    
+    <link rel="prev" href="./01_getting_started.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book"
+        data-level="2"
+        data-chapter-title="Components"
+        data-filepath="02_components.md"
+        data-basepath="."
+        data-revision="Sat May 07 2016 13:06:34 GMT+0600 (NOVT)"
+        data-innerlanguage="">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="01_getting_started.html">
+            
+                
+                    <a href="./01_getting_started.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Getting Started
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2" data-path="02_components.html">
+            
+                
+                    <a href="./02_components.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Components
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="03_virtual_dom.html">
+            
+                
+                    <a href="./03_virtual_dom.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Virtual DOM
+                    </a>
+            
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >kivi guide</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="components">Components</h1>
+<p>Components are the foundational feature of the kivi library. They are tightly integrated with kivi Scheduler, and should
+be used as a basic building block for creating a user interface. Component can be a simple HTML element, SVG element,
+or a canvas object. To update its representation it is possible to use direct DOM manipulations, Virtual DOM API, or
+draw on a canvas.</p>
+<h2 id="componentdescriptor">ComponentDescriptor</h2>
+<p>Each component should declare its properties and behavior in <code>ComponentDescriptor</code> object. TypeScript users can specify
+its input data type and state type with parametric types <code>ComponentDescriptor&lt;D, S&gt;</code>.</p>
+<p>Component descriptor provides a <code>createComponent</code> method to create component instances. First parameter is a parent
+component, second is an input data and third is a children. Parent component is used to determine the depth of the
+component in components tree, scheduler is using this information to prioritize updates of components with the lowest
+depth, so when several components are invalidated, parents should update before its children to prevent unnecessary
+computation when invalidated child is removed.</p>
+<h3 id="example">Example</h3>
+<pre><code class="lang-ts"><span class="hljs-keyword">class</span> Data {
+  x: <span class="hljs-built_in">number</span>;
+  y: <span class="hljs-built_in">number</span>;
+
+  <span class="hljs-constructor"><span class="hljs-keyword">constructor</span>(x: number, y: number) </span>{
+    <span class="hljs-keyword">this</span>.x = x;
+    <span class="hljs-keyword">this</span>.y = y;
+  }
+}
+
+<span class="hljs-keyword">class</span> State {
+  xy: <span class="hljs-built_in">number</span>;
+
+  <span class="hljs-constructor"><span class="hljs-keyword">constructor</span>(data: Data) </span>{
+    <span class="hljs-keyword">this</span>.xy = data.x * data.y;
+  }
+}
+
+<span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;Data, State&gt;()
+  .canvas()
+  .init((c) =&gt; {
+    c.state = <span class="hljs-keyword">new</span> State(c.data);
+  })
+  .update((c) =&gt; {
+    <span class="hljs-keyword">const</span> ctx = c.get2DContext();
+    ctx.fillStyle = <span class="hljs-string">&apos;rgba(0, 0, 0, 1)&apos;</span>;
+    ctx.fillRect(c.data.x, c.data.y, c.state.xy, c.state.xy);
+  });
+
+<span class="hljs-keyword">const</span> componentInstance = MyComponent.createComponent(<span class="hljs-literal">undefined</span>, <span class="hljs-keyword">new</span> Data(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>));
+</code></pre>
+<h3 id="properties">Properties</h3>
+<h5 id="tagnametagname-string-componentdescriptor"><code>tagName(tagName: string): ComponentDescriptor</code></h5>
+<p>Specifies a tagName of the root element.</p>
+<h5 id="svg-componentdescriptor"><code>svg(): ComponentDescriptor</code></h5>
+<p>Root element will be created in SVG namespace.</p>
+<h5 id="canvas-componentdescriptor"><code>canvas(): ComponentDescriptor</code></h5>
+<p>Root element will be a canvas object, <code>Component.get2DContext(): CanvasRenderingContext2D</code> will return a canvas context.</p>
+<h3 id="data-setters">Data setters</h3>
+<h5 id="setdatac-componentd-s-olddata-d-newdata-d"><code>setData(c: Component&lt;D, S&gt;, oldData: D, newData: D)</code></h5>
+<p>If new data changes representation of the component, data setter should mark component as dirty with
+<code>Component.markDirty()</code> method.</p>
+<p>Default data setter will check identity of the data objects, and mark component as dirty when its identity isn&apos;t the
+same. To prevent identity checking, use <code>ComponentDescriptor.disableIdentityChecking()</code> method.</p>
+<h5 id="setchildrenc-componentd-s-oldchildren-vnodestring-newchildren-vnodestring"><code>setChildren(c: Component&lt;D, S&gt;, oldChildren: VNode[]|string, newChildren: VNode[]|string)</code></h5>
+<p>If new children changes representation of the component, children setter should mark component as dirty with
+<code>Component.markDirty()</code> method.</p>
+<p>Default children setter will check identity of the children objects, and mark component as dirty when its identity isn&apos;t
+the same.</p>
+<h3 id="lifecycle-methods">Lifecycle Methods</h3>
+<h5 id="initc-componentd-s"><code>init(c: Component&lt;D, S&gt;)</code></h5>
+<p>Init callback will be invoked when component is instantiated, <code>element</code>, <code>data</code> and <code>children</code> properties will be
+ready before init callback.</p>
+<h5 id="updatec-componentd-s"><code>update(c: Component&lt;D, S&gt;)</code></h5>
+<p>The update method is required by all components.</p>
+<p>It will be invoked each time when component should update its state or representation.</p>
+<h5 id="invalidatedc-componentd-s"><code>invalidated(c: Component&lt;D, S&gt;)</code></h5>
+<p>Invalidated callback will be invoked when component is invalidated with <code>Component.invalidate()</code> method.</p>
+<h5 id="attachedc-componentd-s"><code>attached(c: Component&lt;D, S&gt;)</code></h5>
+<p>Attached callback will be invoked when component is attached to the document.</p>
+<h5 id="detachedc-componentd-s"><code>detached(c: Component&lt;D, S&gt;)</code></h5>
+<p>Detached callback will be invoked when component is detached from the document.</p>
+<h5 id="disposedc-componentd-s"><code>disposed(c: Component&lt;D, S&gt;)</code></h5>
+<p>Disposed callback will be invoked when component is disposed.</p>
+<h2 id="component">Component</h2>
+<p>Most of the time components will be created and destroyed automatically with Virtual DOM API, but it is possible to use
+them directly.</p>
+<p>When using components directly, all lifecycle methods should be invoked manually, so when component is created it can be
+attached to the document with a simple native DOM call <code>element.appendChild(component.element)</code>, immediately after
+attaching it is required to call <code>component.attach()</code> method and then it can be updated with <code>component.update()</code>
+method. When component is removed, depending on the use case it can be temporarily detached and then it is required to
+call <code>component.detach()</code>, otherwise if component isn&apos;t needed anymore it is required to call <code>component.dispose()</code> to
+destroy component.</p>
+<p>Kivi also provides a simple function
+<code>injectComponent(descriptor: ComponentDescriptor&lt;D, S&gt;, container: Element, data?: D): Component&lt;D, S&gt;</code> that hides all
+this details when injecting component to the document.</p>
+<h5 id="componentdsetdatanewdata-d"><code>Component&lt;D&gt;.setData(newData: D)</code></h5>
+<p>Sets a new data for a component.</p>
+<h5 id="componentdsetchildrennewchildren-vnodestring"><code>Component&lt;D&gt;.setChildren(newChildren: VNode[]|string)</code></h5>
+<p>Sets a new children for a component.</p>
+<h5 id="componentinvalidate"><code>Component.invalidate()</code></h5>
+<p>Invalidates a component and registers in the scheduler queue for updates, when scheduler starts writing to the DOM, it
+will invoke <code>update</code> method of the invalidated component.</p>
+<h5 id="componentmarkdirty"><code>Component.markDirty()</code></h5>
+<p>Mark component as dirty without registering in the scheduler queue.</p>
+<h5 id="componentupdate"><code>Component.update()</code></h5>
+<p>Update component if component is dirty and attached to the document.</p>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="./01_getting_started.html" class="navigation navigation-prev " aria-label="Previous page: Getting Started"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./03_virtual_dom.html" class="navigation navigation-next " aria-label="Next page: Virtual DOM"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

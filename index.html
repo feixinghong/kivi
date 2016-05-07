@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Introduction | kivi guide</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Kivi is a javascript (TypeScript) library for building web user interfaces. Itprovides Virtual DOM API for DOM manipulations, Components, and Scheduler tightly integrated with Components. It doesn&#39;thave a router, or anything that is related to application state, kivi is just a view library.">
+        <meta name="generator" content="GitBook 2.6.7">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="./01_getting_started.html" />
+    
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book"
+        data-level="0"
+        data-chapter-title="Introduction"
+        data-filepath="README.md"
+        data-basepath="."
+        data-revision="Sat May 07 2016 13:06:34 GMT+0600 (NOVT)"
+        data-innerlanguage="">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter active" data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="01_getting_started.html">
+            
+                
+                    <a href="./01_getting_started.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Getting Started
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="02_components.html">
+            
+                
+                    <a href="./02_components.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Components
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="03_virtual_dom.html">
+            
+                
+                    <a href="./03_virtual_dom.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Virtual DOM
+                    </a>
+            
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >kivi guide</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="kivi-guide">kivi guide</h1>
+<p><a href="http://github.com/localvoid/kivi" target="_blank">Kivi</a> is a javascript (TypeScript) library for building web user interfaces. It
+provides Virtual DOM API for DOM manipulations, Components, and Scheduler tightly integrated with Components. It doesn&apos;t
+have a router, or anything that is related to application state, kivi is just a view library.</p>
+<p>Virtual DOM in kivi is just another API for DOM manipulations and can be used side by side with direct DOM
+manipulations.</p>
+<h2 id="example">Example</h2>
+<p>Simple application with a component that prints &quot;Hello World&quot;.</p>
+<pre><code class="lang-js"><span class="hljs-keyword">import</span> {createVRoot, createVElement, ComponentDescriptor, injectComponent} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;kivi&apos;</span>;
+
+<span class="hljs-keyword">const</span> HelloWorld = <span class="hljs-keyword">new</span> ComponentDescriptor()
+  .update((c) =&gt; {
+    c.sync(createVRoot().children(<span class="hljs-string">`Hello <span class="hljs-subst">${c.data}</span>`</span>));
+  });
+
+injectComponent(Main, <span class="hljs-built_in">document</span>.body, <span class="hljs-string">&apos;World&apos;</span>);
+</code></pre>
+<h2 id="performance">Performance</h2>
+<p>Kivi has one of the fastest Virtual DOM implementations, it was designed from the ground up with high performance in
+mind.</p>
+<p>Benchmarks:</p>
+<ul>
+<li><a href="https://localvoid.github.io/uibench/" target="_blank">uibench</a></li>
+<li><a href="https://localvoid.github.io/kivi-dbmonster/" target="_blank">dbmonster</a></li>
+</ul>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        
+        <a href="./01_getting_started.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Getting Started"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>
