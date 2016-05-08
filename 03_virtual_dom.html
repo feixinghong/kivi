@@ -51,7 +51,7 @@
         data-chapter-title="Virtual DOM"
         data-filepath="03_virtual_dom.md"
         data-basepath="."
-        data-revision="Sat May 07 2016 13:06:34 GMT+0600 (NOVT)"
+        data-revision="Sun May 08 2016 16:41:01 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -205,12 +205,9 @@ dynamic shape properties use <code>dynamiShapeProps(props: {[key: string]: any})
 <p>Key should be unique among its siblings.</p>
 <p>When track by key is enabled, children reconciliation algorithm uses a key value to find virtual node in old children
 list that represented the same DOM node.</p>
-<h3 id="using-virtual-dom-from-components">Using Virtual DOM from Components</h3>
-<h5 id="createvroot-vnode"><code>createVRoot(): VNode</code></h5>
-<p>Creates a virtual root node that is used as a root element in component.</p>
-<h5 id="componentsyncnewroot-vnode-renderflags-number"><code>Component.sync(newRoot: VNode, renderFlags?: number)</code></h5>
-<p>Synchronize component&apos;s subtree with a new Virtual DOM tree.</p>
-<p>Render flags can be used in advanced use cases to perform shallow render, shallow update or both.</p>
+<h3 id="using-virtual-dom-with-components">Using Virtual DOM with components</h3>
+<h5 id="componentdescriptord-svrenderc-componentd-s-root-vnode--vnode"><code>ComponentDescriptor&lt;D, S&gt;.vRender((c: Component&lt;D, S&gt;, root: VNode) =&gt; VNode)</code></h5>
+<p>Set default Virtual DOM render function.</p>
 
                     
                     </section>
