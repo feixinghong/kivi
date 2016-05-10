@@ -51,7 +51,7 @@
         data-chapter-title="Virtual DOM"
         data-filepath="03_virtual_dom.md"
         data-basepath="."
-        data-revision="Sun May 08 2016 16:41:01 GMT+0600 (NOVT)"
+        data-revision="Tue May 10 2016 18:16:20 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -167,11 +167,14 @@ advanced tools that can reduce Virtual DOM diffing overhead, and it will be quit
 reimplementing similar algorithms.</p>
 <h2 id="basic-api">Basic API</h2>
 <h3 id="creating-virtual-dom-nodes">Creating Virtual DOM Nodes</h3>
-<h5 id="createvelementtagname-string-vnode"><code>createVElement(tagName: string): VNode</code></h5>
+<h5 id="createvelement">createVElement</h5>
+<p>Function: <code>createVElement(tagName: string): VNode</code></p>
 <p>Creates a virtual node representing a HTML Element.</p>
-<h5 id="createvsvgelementtagname-string-vnode"><code>createVSvgElement(tagName: string): VNode</code></h5>
+<h5 id="createvsvgelement">createVSvgElement</h5>
+<p>Function: <code>createVSvgElement(tagName: string): VNode</code></p>
 <p>Creates a virtual node representing a SVG Element.</p>
-<h5 id="createvtextcontent-string-vnode"><code>createVText(content: string): VNode</code></h5>
+<h5 id="createvtext">createVText</h5>
+<p>Function: <code>createVText(content: string): VNode</code></p>
 <p>Creates a virtual node representing a Text Node.</p>
 <h3 id="setting-vnode-properties">Setting VNode properties</h3>
 <p>VNode object provides different chained methods to set properties.</p>
@@ -183,30 +186,38 @@ reimplementing similar algorithms.</p>
   })
   .children(<span class="hljs-string">&quot;Link to localhost&quot;</span>);
 </code></pre>
-<h5 id="attrsattrs-key-string-any"><code>attrs(attrs: {[key: string]: any})</code></h5>
+<h5 id="attrs">attrs</h5>
+<p>Method: <code>vnode.attrs(attrs: {[key: string]: any}): VNode</code></p>
 <p>Set HTML attributes.</p>
 <p>Attrs object should always have the same shape when creating virtual node representing the same element. To specify
-dynamic shape attributes use <code>dynamiShapeAttrs(attrs: {[key: string]: any})</code> method.</p>
-<h5 id="propsprops-key-string-any"><code>props(props: {[key: string]: any})</code></h5>
+dynamic shape attributes use <code>dynamiShapeAttrs</code> method.</p>
+<h5 id="props">props</h5>
+<p>Method: <code>vnode.props(props: {[key: string]: any}): VNode</code></p>
 <p>Set properties.</p>
 <p>Props object should always have the same shape when creating virtual node representing the same element. To specify
-dynamic shape properties use <code>dynamiShapeProps(props: {[key: string]: any})</code> method.</p>
+dynamic shape properties use <code>dynamiShapeProps</code> method.</p>
 <p>When virtual node is mounted on top of existing HTML, all properties will be assigned during mounting phase.</p>
-<h5 id="stylestyle-string"><code>style(style: string)</code></h5>
+<h5 id="style">style</h5>
+<p>Method: <code>vnode.style(style: string): VNode</code></p>
 <p>Set style in CSS string format.</p>
-<h5 id="classnameclassname-string"><code>className(className: string)</code></h5>
+<h5 id="class-name">class name</h5>
+<p>Method: <code>vnode.className(className: string): VNode</code></p>
 <p>Set class name.</p>
-<h5 id="childrenchildren-vnodestring"><code>children(children: VNode[]|string)</code></h5>
+<h5 id="children">children</h5>
+<p>Method <code>vnode.children(children: VNode[]|string): VNode</code></p>
 <p>Set children.</p>
-<h5 id="trackbykeychildrenchildren-vnode"><code>trackByKeyChildren(children: VNode[])</code></h5>
+<h5 id="trackbykeychildren">trackByKeyChildren</h5>
+<p>Method: <code>vnode.trackByKeyChildren(children: VNode[]): VNode</code></p>
 <p>Set children with enabled tracking by key, all children should have a key and it should be unique among its siblings.</p>
-<h5 id="keykey-any"><code>key(key: any)</code></h5>
+<h5 id="key">key</h5>
+<p>Method: <code>vnode.key(key: any): VNode</code></p>
 <p>Set key.</p>
 <p>Key should be unique among its siblings.</p>
 <p>When track by key is enabled, children reconciliation algorithm uses a key value to find virtual node in old children
 list that represented the same DOM node.</p>
 <h3 id="using-virtual-dom-with-components">Using Virtual DOM with components</h3>
-<h5 id="componentdescriptord-svrenderc-componentd-s-root-vnode--vnode"><code>ComponentDescriptor&lt;D, S&gt;.vRender((c: Component&lt;D, S&gt;, root: VNode) =&gt; VNode)</code></h5>
+<h5 id="vrender">vRender</h5>
+<p>Method: <code>componentDescriptor.vRender((c: Component&lt;D, S&gt;, root: VNode) =&gt; VNode)</code></p>
 <p>Set default Virtual DOM render function.</p>
 
                     

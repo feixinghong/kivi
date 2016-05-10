@@ -53,7 +53,7 @@
         data-chapter-title="Components"
         data-filepath="02_components.md"
         data-basepath="."
-        data-revision="Sun May 08 2016 16:41:01 GMT+0600 (NOVT)"
+        data-revision="Tue May 10 2016 18:16:20 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -162,19 +162,15 @@
                     
                         <h1 id="components">Components</h1>
 <p>Components are the foundational feature of the kivi library. They are tightly integrated with kivi Scheduler, and should
-be used as a basic building block for creating a user interface. Component can be a simple HTML element, SVG element,
+be used as a basic building block for creating user interface. Component can be a simple HTML element, SVG element,
 or a canvas object. To update its representation it is possible to use direct DOM manipulations, Virtual DOM API, or
 draw on a canvas.</p>
 <h2 id="componentdescriptor">ComponentDescriptor</h2>
 <p>Each component should declare its properties and behavior in <code>ComponentDescriptor</code> object. TypeScript users can specify
-its input data type and state type with parametric types <code>ComponentDescriptor&lt;D, S&gt;</code>.</p>
-<p>Component descriptor provides a <code>createComponent</code> method to create component instances. First parameter is a parent
-component, second is an input data and third is a children. Parent component is used to determine the depth of the
-component in components tree, scheduler is using this information to prioritize updates of components with the lowest
-depth, so when several components are invalidated, parents should update before its children to prevent unnecessary
-computation when invalidated child is removed.</p>
+its props type, state type and auxiliary data type with parametric types <code>ComponentDescriptor&lt;P, S, D&gt;</code>.</p>
+<p>Component descriptor provides a <code>createComponent</code> and <code>createRootComponent</code> methods to create component instances.</p>
 <h3 id="example">Example</h3>
-<pre><code class="lang-ts"><span class="hljs-keyword">class</span> Data {
+<pre><code class="lang-ts"><span class="hljs-keyword">class</span> Props {
   x: <span class="hljs-built_in">number</span>;
   y: <span class="hljs-built_in">number</span>;
 
@@ -187,68 +183,61 @@ computation when invalidated child is removed.</p>
 <span class="hljs-keyword">class</span> State {
   xy: <span class="hljs-built_in">number</span>;
 
-  <span class="hljs-constructor"><span class="hljs-keyword">constructor</span>(data: Data) </span>{
-    <span class="hljs-keyword">this</span>.xy = data.x * data.y;
+  <span class="hljs-constructor"><span class="hljs-keyword">constructor</span>(props: Props) </span>{
+    <span class="hljs-keyword">this</span>.xy = props.x * props.y;
   }
 }
 
-<span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;Data, State&gt;()
+<span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;Props, State, <span class="hljs-built_in">any</span>&gt;()
   .canvas()
   .init((c) =&gt; {
-    c.state = <span class="hljs-keyword">new</span> State(c.data);
+    c.state = <span class="hljs-keyword">new</span> State(c.props);
   })
   .update((c) =&gt; {
     <span class="hljs-keyword">const</span> ctx = c.get2DContext();
     ctx.fillStyle = <span class="hljs-string">&apos;rgba(0, 0, 0, 1)&apos;</span>;
-    ctx.fillRect(c.data.x, c.data.y, c.state.xy, c.state.xy);
+    ctx.fillRect(c.props.x, c.props.y, c.state.xy, c.state.xy);
   });
 
-<span class="hljs-keyword">const</span> componentInstance = MyComponent.createComponent(<span class="hljs-literal">undefined</span>, <span class="hljs-keyword">new</span> Data(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>));
+<span class="hljs-keyword">const</span> componentInstance = MyComponent.createRootComponent(<span class="hljs-keyword">new</span> Data(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>));
 </code></pre>
-<h3 id="properties">Properties</h3>
-<h5 id="tagnametagname-string-componentdescriptor"><code>tagName(tagName: string): ComponentDescriptor</code></h5>
+<h3 id="basic-api">Basic API</h3>
+<h5 id="tagname">tagName</h5>
+<p>Method: <code>componentDescriptor.tagName(tagName: string): ComponentDescriptor&lt;P, D, S&gt;</code></p>
 <p>Specifies a tagName of the root element.</p>
-<h5 id="svg-componentdescriptor"><code>svg(): ComponentDescriptor</code></h5>
+<h5 id="svg">svg</h5>
+<p>Method: <code>componentDescriptor.svg(): ComponentDescriptor&lt;P, D, S&gt;</code></p>
 <p>Root element will be created in SVG namespace.</p>
-<h5 id="canvas-componentdescriptor"><code>canvas(): ComponentDescriptor</code></h5>
+<h5 id="canvas">canvas</h5>
+<p>Method: <code>componentDescriptor.canvas(): ComponentDescriptor&lt;P, D, S&gt;</code></p>
 <p>Root element will be a canvas object, <code>Component.get2DContext(): CanvasRenderingContext2D</code> will return a canvas context.</p>
-<h3 id="data-setters">Data setters</h3>
-<h5 id="setdatac-componentd-s-olddata-d-newdata-d"><code>setData(c: Component&lt;D, S&gt;, oldData: D, newData: D)</code></h5>
-<p>If new data changes representation of the component, data setter should mark component as dirty with
-<code>Component.markDirty()</code> method.</p>
-<p>Default data setter will check identity of the data objects, and mark component as dirty when its identity isn&apos;t the
-same. To prevent identity checking, use <code>ComponentDescriptor.disableIdentityChecking()</code> method.</p>
-<h5 id="setchildrenc-componentd-s-oldchildren-vnodestring-newchildren-vnodestring"><code>setChildren(c: Component&lt;D, S&gt;, oldChildren: VNode[]|string, newChildren: VNode[]|string)</code></h5>
-<p>If new children changes representation of the component, children setter should mark component as dirty with
-<code>Component.markDirty()</code> method.</p>
-<p>Default children setter will check identity of the children objects, and mark component as dirty when its identity isn&apos;t
-the same.</p>
 <h3 id="lifecycle-methods">Lifecycle Methods</h3>
-<h5 id="initc-componentd-s"><code>init(c: Component&lt;D, S&gt;)</code></h5>
+<h5 id="init">init</h5>
+<p>Method: <code>componentDescriptor.init((c: Component&lt;P, D, S&gt;) =&gt; void): ComponentDescriptor&lt;P, D, S&gt;</code></p>
 <p>Init callback will be invoked when component is instantiated, <code>element</code>, <code>data</code> and <code>children</code> properties will be
 ready before init callback.</p>
-<h5 id="updatec-componentd-s"><code>update(c: Component&lt;D, S&gt;)</code></h5>
-<p>The update method is required by all components.</p>
-<p>It will be invoked each time when component should update its state or representation.</p>
-<h5 id="invalidatedc-componentd-s"><code>invalidated(c: Component&lt;D, S&gt;)</code></h5>
-<p>Invalidated callback will be invoked when component is invalidated with <code>Component.invalidate()</code> method.</p>
-<h5 id="attachedc-componentd-s"><code>attached(c: Component&lt;D, S&gt;)</code></h5>
+<h5 id="update">update</h5>
+<p>Method: <code>componentDescriptor.update((c: Component&lt;P, D, S&gt;) =&gt; void): ComponentDescriptor&lt;P, D, S&gt;</code></p>
+<p>Update callback will be invoked each time when component should update its representation.</p>
+<h5 id="attached">attached</h5>
+<p>Method: <code>componentDescriptor.attached((c: Component&lt;P, D, S&gt;) =&gt; void): ComponentDescriptor&lt;P, D, S&gt;</code></p>
 <p>Attached callback will be invoked when component is attached to the document.</p>
-<h5 id="detachedc-componentd-s"><code>detached(c: Component&lt;D, S&gt;)</code></h5>
+<h5 id="detached">detached</h5>
+<p>Method: <code>componentDescriptor.detached((c: Component&lt;P, D, S&gt;) =&gt; void): ComponentDescriptor&lt;P, D, S&gt;</code></p>
 <p>Detached callback will be invoked when component is detached from the document.</p>
-<h5 id="disposedc-componentd-s"><code>disposed(c: Component&lt;D, S&gt;)</code></h5>
+<h5 id="disposed">disposed</h5>
+<p>Method: <code>componentDescriptor.disposed((c: Component&lt;P, D, S&gt;) =&gt; void): ComponentDescriptor&lt;P, D, S&gt;</code></p>
 <p>Disposed callback will be invoked when component is disposed.</p>
-<h2 id="component">Component</h2>
-<h5 id="componentdsetdatanewdata-d"><code>Component&lt;D&gt;.setData(newData: D)</code></h5>
-<p>Sets a new data for a component.</p>
-<h5 id="componentdsetchildrennewchildren-vnodestring"><code>Component&lt;D&gt;.setChildren(newChildren: VNode[]|string)</code></h5>
-<p>Sets a new children for a component.</p>
-<h5 id="componentinvalidate"><code>Component.invalidate()</code></h5>
+<h2 id="component-instance-api">Component instance API</h2>
+<h5 id="setprops">setProps</h5>
+<p>Method: <code>component.setProps(newProps: D): boolean</code></p>
+<p>Sets a new props for a component. Returns true if props are changed.</p>
+<h5 id="invalidate">invalidate</h5>
+<p>Method: <code>component.invalidate(): boolean</code></p>
 <p>Invalidates a component and registers in the scheduler queue for updates, when scheduler starts writing to the DOM, it
 will invoke <code>update</code> method of the invalidated component.</p>
-<h5 id="componentmarkdirty"><code>Component.markDirty()</code></h5>
-<p>Mark component as dirty without registering in the scheduler queue.</p>
-<h5 id="componentupdate"><code>Component.update()</code></h5>
+<h5 id="update">update</h5>
+<p>Method: <code>component.update()</code></p>
 <p>Update component if component is dirty and attached to the document.</p>
 
                     

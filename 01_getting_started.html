@@ -53,7 +53,7 @@
         data-chapter-title="Getting Started"
         data-filepath="01_getting_started.md"
         data-basepath="."
-        data-revision="Sun May 08 2016 16:41:01 GMT+0600 (NOVT)"
+        data-revision="Tue May 10 2016 18:16:20 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -210,7 +210,7 @@ application. But it works perfectly fine with <a href="http://jspm.io/" target="
 
 <span class="hljs-keyword">const</span> Main = <span class="hljs-keyword">new</span> ComponentDescriptor()
   .update((c) =&gt; {
-    c.element.textContent = <span class="hljs-string">`Hello <span class="hljs-subst">${c.data}</span>`</span>;
+    c.element.textContent = <span class="hljs-string">`Hello <span class="hljs-subst">${c.props}</span>`</span>;
   });
 
 injectComponent(Main, <span class="hljs-built_in">document</span>.body, <span class="hljs-string">&quot;World&quot;</span>);
