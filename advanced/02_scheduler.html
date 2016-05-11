@@ -37,6 +37,8 @@
         
     
     
+    <link rel="next" href="../advanced/03_components.html" />
+    
     
     <link rel="prev" href="../advanced/01_vmodel.html" />
     
@@ -51,7 +53,7 @@
         data-chapter-title="Scheduler"
         data-filepath="advanced/02_scheduler.md"
         data-basepath=".."
-        data-revision="Wed May 11 2016 23:41:50 GMT+0600 (NOVT)"
+        data-revision="Wed May 11 2016 23:52:37 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -176,6 +178,51 @@
             
         </li>
     
+        <li class="chapter " data-level="3.3" data-path="advanced/03_components.html">
+            
+                
+                    <a href="../advanced/03_components.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.3.</b>
+                        
+                        Component advanced techniques
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="advanced/04_virtual_dom.html">
+            
+                
+                    <a href="../advanced/04_virtual_dom.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.4.</b>
+                        
+                        Virtual DOM advanced techniques
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="advanced/05_container_manager.html">
+            
+                
+                    <a href="../advanced/05_container_manager.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.5.</b>
+                        
+                        Container Manager
+                    </a>
+            
+            
+        </li>
+    
 
             </ul>
             
@@ -223,7 +270,7 @@ instance, import it with <code>import {scheduler} from &quot;kivi&quot;</code>.<
 <p>Frame tasks will be executed in batches, starting with updating components sorted by their depth in components tree,
 and then switching between read and write tasks until there are no tasks left.</p>
 <p>There are two methods for accesing frame tasks: <code>scheduler.currentFrame()</code> to get task group for the current frame, and
-<code>scheduler.nextFrame</code> for the next frame.</p>
+<code>scheduler.nextFrame()</code> for the next frame.</p>
 <p>Each frame task group provides different queues for components, DOM read and write tasks, and tasks that will be
 executed after all other tasks are finished:</p>
 <ul>
@@ -261,7 +308,7 @@ update.</p>
 }
 
 <span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;Data, <span class="hljs-built_in">any</span>&gt;()
-  .isPropsChanged((c, newProps) =&gt; {
+  .newPropsReceived((c, newProps) =&gt; {
     <span class="hljs-keyword">if</span> (c.mtime &lt; newProps.mtime) {
       c.markDirty();
     }
@@ -280,8 +327,10 @@ we are marking component as dirty. When component finished update, it will autom
         </div>
 
         
-        <a href="../advanced/01_vmodel.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: VModel"><i class="fa fa-angle-left"></i></a>
+        <a href="../advanced/01_vmodel.html" class="navigation navigation-prev " aria-label="Previous page: VModel"><i class="fa fa-angle-left"></i></a>
         
+        
+        <a href="../advanced/03_components.html" class="navigation navigation-next " aria-label="Next page: Component advanced techniques"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

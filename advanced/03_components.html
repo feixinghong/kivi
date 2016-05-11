@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Virtual DOM | kivi</title>
+        <title>Component advanced techniques | kivi</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -37,10 +37,10 @@
         
     
     
-    <link rel="next" href="../advanced/01_vmodel.html" />
+    <link rel="next" href="../advanced/04_virtual_dom.html" />
     
     
-    <link rel="prev" href="../basics/01_components.html" />
+    <link rel="prev" href="../advanced/02_scheduler.html" />
     
 
         
@@ -49,9 +49,9 @@
         
         
     <div class="book"
-        data-level="2.2"
-        data-chapter-title="Virtual DOM"
-        data-filepath="basics/02_virtual_dom.md"
+        data-level="3.3"
+        data-chapter-title="Component advanced techniques"
+        data-filepath="advanced/03_components.md"
         data-basepath=".."
         data-revision="Wed May 11 2016 23:52:37 GMT+0600 (NOVT)"
         data-innerlanguage="">
@@ -120,7 +120,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.2" data-path="basics/02_virtual_dom.html">
+        <li class="chapter " data-level="2.2" data-path="basics/02_virtual_dom.html">
             
                 
                     <a href="../basics/02_virtual_dom.html">
@@ -178,7 +178,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="advanced/03_components.html">
+        <li class="chapter active" data-level="3.3" data-path="advanced/03_components.html">
             
                 
                     <a href="../advanced/03_components.html">
@@ -261,67 +261,11 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="virtual-dom">Virtual DOM</h1>
-<p>Virtual DOM simplifies the way to manage DOM mutations, just describe how your component should look at any point in
-time and Virtual DOM reconciliation algorithm will make all necessary DOM operations to update component representation
-in a most efficient way.</p>
-<p>The basic Virtual DOM API that kivi provides is enough for most use cases. But when it isn&apos;t enough, kivi provides many
-advanced tools that can reduce Virtual DOM diffing overhead, and it will be quite hard to beat its performance without
-reimplementing similar algorithms.</p>
-<h2 id="basic-api">Basic API</h2>
-<h3 id="creating-virtual-dom-nodes">Creating Virtual DOM Nodes</h3>
-<h5 id="createvelement">createVElement</h5>
-<p>Function: <code>createVElement(tagName: string): VNode</code></p>
-<p>Creates a virtual node representing a HTML Element.</p>
-<h5 id="createvsvgelement">createVSvgElement</h5>
-<p>Function: <code>createVSvgElement(tagName: string): VNode</code></p>
-<p>Creates a virtual node representing a SVG Element.</p>
-<h5 id="createvtext">createVText</h5>
-<p>Function: <code>createVText(content: string): VNode</code></p>
-<p>Creates a virtual node representing a Text Node.</p>
-<h3 id="setting-vnode-properties">Setting VNode properties</h3>
-<p>VNode object provides different chained methods to set properties.</p>
-<p>For example:</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">const</span> e = createVElement(<span class="hljs-string">&quot;a&quot;</span>)
-  .attrs({
-    <span class="hljs-string">&quot;href&quot;</span>: <span class="hljs-string">&quot;localhost&quot;</span>,
-    <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Link to localhost&quot;</span>,
-  })
-  .children(<span class="hljs-string">&quot;Link to localhost&quot;</span>);
-</code></pre>
-<h5 id="attrs">attrs</h5>
-<p>Method: <code>vnode.attrs(attrs: {[key: string]: any}): VNode</code></p>
-<p>Set HTML attributes.</p>
-<p>Attrs object should always have the same shape when creating virtual node representing the same element. To specify
-dynamic shape attributes use <code>dynamiShapeAttrs</code> method.</p>
-<h5 id="props">props</h5>
-<p>Method: <code>vnode.props(props: {[key: string]: any}): VNode</code></p>
-<p>Set properties.</p>
-<p>Props object should always have the same shape when creating virtual node representing the same element. To specify
-dynamic shape properties use <code>dynamiShapeProps</code> method.</p>
-<p>When virtual node is mounted on top of existing HTML, all properties will be assigned during mounting phase.</p>
-<h5 id="style">style</h5>
-<p>Method: <code>vnode.style(style: string): VNode</code></p>
-<p>Set style in CSS string format.</p>
-<h5 id="class-name">class name</h5>
-<p>Method: <code>vnode.className(className: string): VNode</code></p>
-<p>Set class name.</p>
-<h5 id="children">children</h5>
-<p>Method <code>vnode.children(children: VNode[]|string): VNode</code></p>
-<p>Set children.</p>
-<h5 id="trackbykeychildren">trackByKeyChildren</h5>
-<p>Method: <code>vnode.trackByKeyChildren(children: VNode[]): VNode</code></p>
-<p>Set children with enabled tracking by key, all children should have a key and it should be unique among its siblings.</p>
-<h5 id="key">key</h5>
-<p>Method: <code>vnode.key(key: any): VNode</code></p>
-<p>Set key.</p>
-<p>Key should be unique among its siblings.</p>
-<p>When track by key is enabled, children reconciliation algorithm uses a key value to find virtual node in old children
-list that represented the same DOM node.</p>
-<h3 id="using-virtual-dom-with-components">Using Virtual DOM with components</h3>
-<h5 id="vrender">vRender</h5>
-<p>Method: <code>componentDescriptor.vRender((c: Component&lt;P, S&gt;, root: VNode) =&gt; VNode)</code></p>
-<p>Set default Virtual DOM render function.</p>
+                        <h1 id="component-advanced-techniques">Component advanced techniques</h1>
+<p>WIP</p>
+<h2 id="animated-components">Animated components</h2>
+<h2 id="shallow-update">Shallow update</h2>
+<h2 id="incremental-rendering">Incremental rendering</h2>
 
                     
                     </section>
@@ -332,10 +276,10 @@ list that represented the same DOM node.</p>
         </div>
 
         
-        <a href="../basics/01_components.html" class="navigation navigation-prev " aria-label="Previous page: Components"><i class="fa fa-angle-left"></i></a>
+        <a href="../advanced/02_scheduler.html" class="navigation navigation-prev " aria-label="Previous page: Scheduler"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../advanced/01_vmodel.html" class="navigation navigation-next " aria-label="Next page: VModel"><i class="fa fa-angle-right"></i></a>
+        <a href="../advanced/04_virtual_dom.html" class="navigation navigation-next " aria-label="Next page: Virtual DOM advanced techniques"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
