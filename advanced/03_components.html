@@ -53,7 +53,7 @@
         data-chapter-title="Component advanced techniques"
         data-filepath="advanced/03_components.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 09:18:12 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 09:30:06 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -262,6 +262,19 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="component-advanced-techniques">Component advanced techniques</h1>
+<h2 id="component-recycling">Component recycling</h2>
+<p>When there are many instances of a component and they are quite frequently removed and inserted into documented, it is
+a good practice to enable recycling, so instead of disposing component instances when they are removed from the
+document, they will be placed into recycled pool, and when component instance is created it will always check if
+recycled pool has any available instance and just reuse it.</p>
+<p>Component descriptor method <code>enableComponentRecycling(maxRecycled: number)</code> will enable recycling for component,
+<code>maxRecycled</code> parameter controls the size of recycled pool for this component type.</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> Button = <span class="hljs-keyword">new</span> ComponentDescriptor()
+  .enableComponentRecycling(<span class="hljs-number">100</span>)
+  .vRender((c, root) =&gt; { root.className(<span class="hljs-string">&quot;button&quot;</span>); });
+</code></pre>
+<p>Note: kivi library should be compiled with enabled component recycling. To enable recycling, replace all string
+occurences <code>&lt;@KIVI_COMPONENT_RECYCLING@&gt;</code> with <code>COMPONENT_RECYCLING_ENABLED</code>.</p>
 <h2 id="animated-components">Animated components</h2>
 <p>To update components on each frame, just add them to the list of components that should be updated on each frame with
 method <code>startUpdateEachFrame()</code>. For example:</p>
@@ -287,7 +300,7 @@ subcomponents.</p>
 </code></pre>
 <p><code>RenderFlags</code> also has a flag for shallow rendering <code>ShallowRender</code> that prevents from rendering subcomponents when they
 are created for the first time.</p>
-<h2 id="incremental-rendering-experimental">Incremental rendering <strong>EXPERIMENTAL</strong></h2>
+<h2 id="incremental-rendering-experimental">Incremental rendering **EXPERIMENTAL**</h2>
 <p>Components provide two methods that can trigger incremental rendering: <code>startInteraction()</code> and <code>stopInteraction()</code>.</p>
 <p><code>startInteraction()</code> will enable throttling mode in the scheduler, increment its dependency counter, and mark component
 as a high priority component. High priority components will be updated even if timeframe for a throttled frame is over.</p>

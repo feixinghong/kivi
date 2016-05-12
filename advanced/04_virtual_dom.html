@@ -53,7 +53,7 @@
         data-chapter-title="Virtual DOM advanced techniques"
         data-filepath="advanced/04_virtual_dom.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 09:18:12 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 09:30:06 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -287,7 +287,7 @@ diffing it by reusing the same virtual node on each render. For example:</p>
     ]);
   });
 </code></pre>
-<h2 id="keep-alive-experimental">Keep Alive <strong>EXPERIMENTAL</strong></h2>
+<h2 id="keep-alive-experimental">Keep Alive **EXPERIMENTAL**</h2>
 <p>Keep alive prevents reconciliation algorithm from disposing components, so when they are removed from the document,
 instead of disposing them, they are detached.</p>
 <pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;{ showChild: <span class="hljs-built_in">boolean</span> }, { aliveNode: VNode }&gt;()
