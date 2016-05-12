@@ -51,7 +51,7 @@
         data-chapter-title="Container Manager"
         data-filepath="advanced/05_container_manager.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 08:03:30 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 08:43:09 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -260,7 +260,74 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="container-manager">Container Manager</h1>
-<p>WIP</p>
+<p>Container Manager can override default virtual dom reconciliation functions for DOM node lists manipulations. This
+feature is quite useful for implementing complicated animated containers.</p>
+<p>It has a similar way for declaring properties and behavior to components model. <code>ContainerManagerDescriptor</code> instance
+contains virtual table of properties and methods, and can create <code>ContainerManager</code> instances linked to descriptor.</p>
+<p>Each container manager should override four functions for DOM node lists manipulations:</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">type</span> InsertChildHandler&lt;S&gt; = (manager: ContainerManager&lt;S&gt;,
+                              container: Element,
+                              node: VNode,
+                              nextRef: Node,
+                              owner: Component&lt;<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>&gt;,
+                              renderFlags: <span class="hljs-built_in">number</span>) =&gt; <span class="hljs-built_in">void</span>;
+
+<span class="hljs-keyword">type</span> ReplaceChildHandler&lt;S&gt; = (manager: ContainerManager&lt;S&gt;,
+                               container: Element,
+                               newNode: VNode,
+                               refNode: VNode,
+                               owner: Component&lt;<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>&gt;,
+                               renderFlags: <span class="hljs-built_in">number</span>) =&gt; <span class="hljs-built_in">void</span>;
+
+<span class="hljs-keyword">type</span> MoveChildHandler&lt;S&gt; = (manager: ContainerManager&lt;S&gt;,
+                            container: Element,
+                            node: VNode,
+                            nextRef: Node,
+                            owner: Component&lt;<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>&gt;) =&gt; <span class="hljs-built_in">void</span>;
+
+<span class="hljs-keyword">type</span> RemoveChildHandler&lt;S&gt; = (manager: ContainerManager&lt;S&gt;,
+                              container: Element,
+                              now: VNode,
+                              owner: Component&lt;<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>&gt;) =&gt; <span class="hljs-built_in">void</span>;
+</code></pre>
+<p>To make things easier, kivi provides generic functions for DOM node lists manipulations that will invoke all lifecycle
+handlers in a proper way:</p>
+<ul>
+<li><code>insertVNodeBefore(container: Element, node: VNode, nextRef: Node, owner: Component&lt;any, any&gt;, renderFlags: number)</code></li>
+<li><code>replaceVNode(container: Element, newNode: VNode, refNode: VNode, owner: Component&lt;any, any&gt; renderFlags: number)</code></li>
+<li><code>moveVNode(container: Element, node: VNode, nextRef: Node, owner: Component&lt;any, any&gt;)</code></li>
+<li><code>removeVNode(container: Element, node: VNode, owner: Component&lt;any, any&gt;)</code></li>
+</ul>
+<p>To use container manager in a virtual dom, just assign container manager instance to a virtual dom element with
+<code>managedContainer(manager: ContainerManager&lt;any&gt;)</code> method.</p>
+<h2 id="example">Example</h2>
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyManager = <span class="hljs-keyword">new</span> ContainerManagerDescriptor()
+  .insertChild((manager: ContainerManager&lt;<span class="hljs-built_in">any</span>&gt;, container: Element, node: VNode, nextRef: Node,
+      owner: Component&lt;<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>&gt;, renderFlags: <span class="hljs-built_in">number</span>) =&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;Node inserted&quot;</span>);
+  })
+  .removeChild((manager: ContainerManager&lt;<span class="hljs-built_in">any</span>&gt;, container: Element, node: VNode,
+      owner: Component&lt;<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>&gt;) =&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;Node removed&quot;</span>);
+  });
+  .moveChild((manager: ContainerManager&lt;<span class="hljs-built_in">any</span>&gt;, container: Element, node: VNode, nextRef: Node,
+      owner: Component&lt;<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>&gt;) =&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;Node moved&quot;</span>);
+  });
+  .replaceChild((manager: ContainerManager&lt;<span class="hljs-built_in">any</span>&gt;, container: Element, newNode: VNode, refNode: VNode,
+      owner: Component&lt;<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>&gt;, renderFlags: <span class="hljs-built_in">number</span>) =&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;Node replaced&quot;</span>);
+  });
+
+<span class="hljs-keyword">const</span> manager = MyManager.create();
+
+<span class="hljs-keyword">const</span> vnode = createVElement(<span class="hljs-string">&quot;div&quot;</span>)
+  .managedContainer(manager)
+  .children([
+    createVElement(<span class="hljs-string">&quot;span&quot;</span>),
+    createVElement(<span class="hljs-string">&quot;span&quot;</span>),
+  ]);
+</code></pre>
 
                     
                     </section>
