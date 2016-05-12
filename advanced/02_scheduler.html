@@ -53,7 +53,7 @@
         data-chapter-title="Scheduler"
         data-filepath="advanced/02_scheduler.md"
         data-basepath=".."
-        data-revision="Wed May 11 2016 23:52:37 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 08:03:30 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -317,6 +317,12 @@ update.</p>
 <p>Here we need to check if component&apos;s <code>mtime</code> property is older than <code>mtime</code> in a data object, and if it is older,
 we are marking component as dirty. When component finished update, it will automatically set its <code>mtime</code> to the current
 <code>scheduler.clock</code> value.</p>
+<h2 id="incremental-rendering">Incremental rendering</h2>
+<p>Incremental rendering is a technique to throttle frame tasks. Scheduler will have a small timeframe to perform frame
+tasks on each frame. When timeframe ends, it stops updating and waits for the next frame, scheduler will incrementally
+update all components until each one is updated.</p>
+<p>This technique is useful to make jank-free interactions, for example when user performs an action on an interactive
+component, this component gets a high-priority for updates and scheduler starts updating incrementally.</p>
 
                     
                     </section>
