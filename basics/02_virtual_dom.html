@@ -53,7 +53,7 @@
         data-chapter-title="Virtual DOM"
         data-filepath="basics/02_virtual_dom.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 10:23:05 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 10:47:14 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -269,7 +269,7 @@ in a most efficient way.</p>
 advanced tools that can reduce Virtual DOM diffing overhead, and it will be quite hard to beat its performance without
 reimplementing similar algorithms.</p>
 <h3 id="creating-virtual-dom-nodes">Creating Virtual DOM Nodes</h3>
-<p>To create virtual nodes, kivi has several simple functions:</p>
+<p>Kivi has several simple functions to create virtual nodes:</p>
 <pre><code>// Creates a virtual node representing a HTML Element.
 function createVElement(tagName: string): VNode;
 
@@ -288,7 +288,7 @@ function createVTextInput(): VNode;
 // Creates a virtual node representing an Input Element with checked value.
 function createVCheckedInput(): VNode;
 </code></pre><h3 id="setting-vnode-properties">Setting VNode properties</h3>
-<p>Each virtual node has many different methods to set properties, all property methods support method chaining. For
+<p>Virtual node instance has many different methods to set properties, all property methods support method chaining. For
 example:</p>
 <pre><code class="lang-ts"><span class="hljs-keyword">const</span> e = createVElement(<span class="hljs-string">&quot;a&quot;</span>)
   .attrs({
@@ -303,20 +303,7 @@ VNode.props(props: {[key: string]: any}): VNode;
 VNode.style(style: string): VNode;
 VNode.className(className: string): VNode;
 VNode.children(children: VNode[]|string): VNode;
-</code></pre><h3 id="using-virtual-dom-in-components">Using Virtual DOM in components</h3>
-<p>To use virtual dom in components, we need to declare a function <code>vRender</code> in <code>ComponentDescriptor</code> that will render
-components representation with a virtual dom. For example:</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;{title: <span class="hljs-built_in">string</span>, content: <span class="hljs-built_in">string</span>}, <span class="hljs-built_in">any</span>&gt;()
-  .vRender((c, root) =&gt; {
-    root.children([
-      createVElement(<span class="hljs-string">&quot;h1&quot;</span>).children(c.props.title),
-      createVElement(<span class="hljs-string">&quot;p&quot;</span>).children(c.props.content),
-    ]);
-  });
-</code></pre>
-<p>First parameter of a render function is a component instance, and the second is a virtual node representing a root
-element.</p>
-<h3 id="using-keys-to-preserve-identity">Using keys to preserve identity</h3>
+</code></pre><h3 id="using-keys-to-preserve-identity">Using keys to preserve identity</h3>
 <p>To prevent from losing internal state of DOM elements and components, we should track nodes by some property. Virtual
 DOM reconciliation algorithm is using <code>key</code> property to find virtual nodes representing the same DOM node from
 the previous render.</p>
