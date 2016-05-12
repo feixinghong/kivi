@@ -53,7 +53,7 @@
         data-chapter-title="Virtual DOM"
         data-filepath="basics/02_virtual_dom.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 09:30:06 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 10:23:05 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -187,7 +187,7 @@
                         
                             <b>3.3.</b>
                         
-                        Component advanced techniques
+                        Components
                     </a>
             
             
@@ -202,7 +202,7 @@
                         
                             <b>3.4.</b>
                         
-                        Virtual DOM advanced techniques
+                        Virtual DOM
                     </a>
             
             
@@ -265,23 +265,31 @@
 <p>Virtual DOM simplifies the way to manage DOM mutations, just describe how your component should look at any point in
 time and Virtual DOM reconciliation algorithm will make all necessary DOM operations to update component representation
 in a most efficient way.</p>
-<p>The basic Virtual DOM API that kivi provides is enough for most use cases. But when it isn&apos;t enough, kivi provides many
+<p>The basic Virtual DOM API that kivi provides is enough for most use cases. But when it isn&apos;t enough, kivi has many
 advanced tools that can reduce Virtual DOM diffing overhead, and it will be quite hard to beat its performance without
 reimplementing similar algorithms.</p>
-<h2 id="basic-api">Basic API</h2>
 <h3 id="creating-virtual-dom-nodes">Creating Virtual DOM Nodes</h3>
-<h5 id="createvelement">createVElement</h5>
-<p>Function: <code>createVElement(tagName: string): VNode</code></p>
-<p>Creates a virtual node representing a HTML Element.</p>
-<h5 id="createvsvgelement">createVSvgElement</h5>
-<p>Function: <code>createVSvgElement(tagName: string): VNode</code></p>
-<p>Creates a virtual node representing a SVG Element.</p>
-<h5 id="createvtext">createVText</h5>
-<p>Function: <code>createVText(content: string): VNode</code></p>
-<p>Creates a virtual node representing a Text Node.</p>
-<h3 id="setting-vnode-properties">Setting VNode properties</h3>
-<p>VNode object provides different chained methods to set properties.</p>
-<p>For example:</p>
+<p>To create virtual nodes, kivi has several simple functions:</p>
+<pre><code>// Creates a virtual node representing a HTML Element.
+function createVElement(tagName: string): VNode;
+
+// Creates a virtual node representing a SVG Element.
+function createVSvgElement(tagName: string): VNode;
+
+// Creates a virtual node representing a Text Node.
+function createVText(content: string): VNode;
+
+// Creates a virtual node representing a Component&apos;s root element.
+function createVRoot(): VNode;
+
+// Creates a virtual node representing an Input Element with text value.
+function createVTextInput(): VNode;
+
+// Creates a virtual node representing an Input Element with checked value.
+function createVCheckedInput(): VNode;
+</code></pre><h3 id="setting-vnode-properties">Setting VNode properties</h3>
+<p>Each virtual node has many different methods to set properties, all property methods support method chaining. For
+example:</p>
 <pre><code class="lang-ts"><span class="hljs-keyword">const</span> e = createVElement(<span class="hljs-string">&quot;a&quot;</span>)
   .attrs({
     <span class="hljs-string">&quot;href&quot;</span>: <span class="hljs-string">&quot;localhost&quot;</span>,
@@ -289,39 +297,43 @@ reimplementing similar algorithms.</p>
   })
   .children(<span class="hljs-string">&quot;Link to localhost&quot;</span>);
 </code></pre>
-<h5 id="attrs">attrs</h5>
-<p>Method: <code>vnode.attrs(attrs: {[key: string]: any}): VNode</code></p>
-<p>Set HTML attributes.</p>
-<p>Attrs object should always have the same shape when creating virtual node representing the same element. To specify
-dynamic shape attributes use <code>dynamiShapeAttrs</code> method.</p>
-<h5 id="props">props</h5>
-<p>Method: <code>vnode.props(props: {[key: string]: any}): VNode</code></p>
-<p>Set properties.</p>
-<p>Props object should always have the same shape when creating virtual node representing the same element. To specify
-dynamic shape properties use <code>dynamiShapeProps</code> method.</p>
-<p>When virtual node is mounted on top of existing HTML, all properties will be assigned during mounting phase.</p>
-<h5 id="style">style</h5>
-<p>Method: <code>vnode.style(style: string): VNode</code></p>
-<p>Set style in CSS string format.</p>
-<h5 id="class-name">class name</h5>
-<p>Method: <code>vnode.className(className: string): VNode</code></p>
-<p>Set class name.</p>
-<h5 id="children">children</h5>
-<p>Method <code>vnode.children(children: VNode[]|string): VNode</code></p>
-<p>Set children.</p>
-<h5 id="trackbykeychildren">trackByKeyChildren</h5>
-<p>Method: <code>vnode.trackByKeyChildren(children: VNode[]): VNode</code></p>
-<p>Set children with enabled tracking by key, all children should have a key and it should be unique among its siblings.</p>
-<h5 id="key">key</h5>
-<p>Method: <code>vnode.key(key: any): VNode</code></p>
-<p>Set key.</p>
-<p>Key should be unique among its siblings.</p>
-<p>When track by key is enabled, children reconciliation algorithm uses a key value to find virtual node in old children
-list that represented the same DOM node.</p>
-<h3 id="using-virtual-dom-with-components">Using Virtual DOM with components</h3>
-<h5 id="vrender">vRender</h5>
-<p>Method: <code>componentDescriptor.vRender((c: Component&lt;P, S&gt;, root: VNode) =&gt; VNode)</code></p>
-<p>Set default Virtual DOM render function.</p>
+<p>List of basic properties:</p>
+<pre><code>VNode.attrs(attrs: {[key: string]: any}): VNode;
+VNode.props(props: {[key: string]: any}): VNode;
+VNode.style(style: string): VNode;
+VNode.className(className: string): VNode;
+VNode.children(children: VNode[]|string): VNode;
+</code></pre><h3 id="using-virtual-dom-in-components">Using Virtual DOM in components</h3>
+<p>To use virtual dom in components, we need to declare a function <code>vRender</code> in <code>ComponentDescriptor</code> that will render
+components representation with a virtual dom. For example:</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;{title: <span class="hljs-built_in">string</span>, content: <span class="hljs-built_in">string</span>}, <span class="hljs-built_in">any</span>&gt;()
+  .vRender((c, root) =&gt; {
+    root.children([
+      createVElement(<span class="hljs-string">&quot;h1&quot;</span>).children(c.props.title),
+      createVElement(<span class="hljs-string">&quot;p&quot;</span>).children(c.props.content),
+    ]);
+  });
+</code></pre>
+<p>First parameter of a render function is a component instance, and the second is a virtual node representing a root
+element.</p>
+<h3 id="using-keys-to-preserve-identity">Using keys to preserve identity</h3>
+<p>To prevent from losing internal state of DOM elements and components, we should track nodes by some property. Virtual
+DOM reconciliation algorithm is using <code>key</code> property to find virtual nodes representing the same DOM node from
+the previous render.</p>
+<p>To enable tracking by keys, children property should be assigned with <code>VNode.trackByKeyChildren(children)</code> method. Each
+child should have a <code>key</code> property and it should be unique among its siblings. For example:</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> container = createVElement(<span class="hljs-string">&quot;div&quot;</span>)
+  .trackByKeyChildren([
+    createVElement(<span class="hljs-string">&quot;span&quot;</span>).key(<span class="hljs-number">1</span>).children(<span class="hljs-string">&quot;1&quot;</span>),
+    createVElement(<span class="hljs-string">&quot;span&quot;</span>).key(<span class="hljs-number">2</span>).children(<span class="hljs-string">&quot;2&quot;</span>),
+    createVElement(<span class="hljs-string">&quot;span&quot;</span>).key(<span class="hljs-number">3</span>).children(<span class="hljs-string">&quot;3&quot;</span>),
+  ]);
+</code></pre>
+<p>To find minimum number of move operations, kivi reconciliation algorithm is using
+<a href="https://en.wikipedia.org/wiki/Longest_increasing_subsequence" target="_blank">Longest Increasing Subsequence</a> algorithm. It is highly
+optimized and in most real world situations that involve simple moves of one or two nodes it won&apos;t perform LIS
+computation. See <a href="https://localvoid.github.io/uibench/" target="_blank">uibench</a> benchmark to find out how kivi handles different use
+cases.</p>
 
                     
                     </section>

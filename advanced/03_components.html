@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Component advanced techniques | kivi</title>
+        <title>Components | kivi</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -50,10 +50,10 @@
         
     <div class="book"
         data-level="3.3"
-        data-chapter-title="Component advanced techniques"
+        data-chapter-title="Components"
         data-filepath="advanced/03_components.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 09:30:06 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 10:23:05 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -187,7 +187,7 @@
                         
                             <b>3.3.</b>
                         
-                        Component advanced techniques
+                        Components
                     </a>
             
             
@@ -202,7 +202,7 @@
                         
                             <b>3.4.</b>
                         
-                        Virtual DOM advanced techniques
+                        Virtual DOM
                     </a>
             
             
@@ -261,10 +261,10 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="component-advanced-techniques">Component advanced techniques</h1>
+                        <h1 id="components">Components</h1>
 <h2 id="component-recycling">Component recycling</h2>
-<p>When there are many instances of a component and they are quite frequently removed and inserted into documented, it is
-a good practice to enable recycling, so instead of disposing component instances when they are removed from the
+<p>When there are many instances of a component and they are quite frequently removed and inserted into the documented, it
+is a good practice to enable recycling, so instead of disposing component instances when they are removed from the
 document, they will be placed into recycled pool, and when component instance is created it will always check if
 recycled pool has any available instance and just reuse it.</p>
 <p>Component descriptor method <code>enableComponentRecycling(maxRecycled: number)</code> will enable recycling for component,
@@ -301,7 +301,7 @@ subcomponents.</p>
 <p><code>RenderFlags</code> also has a flag for shallow rendering <code>ShallowRender</code> that prevents from rendering subcomponents when they
 are created for the first time.</p>
 <h2 id="incremental-rendering-experimental">Incremental rendering **EXPERIMENTAL**</h2>
-<p>Components provide two methods that can trigger incremental rendering: <code>startInteraction()</code> and <code>stopInteraction()</code>.</p>
+<p>Components provide two methods that can trigger incremental rendering: <code>startInteraction()</code> and <code>finishInteraction()</code>.</p>
 <p><code>startInteraction()</code> will enable throttling mode in the scheduler, increment its dependency counter, and mark component
 as a high priority component. High priority components will be updated even if timeframe for a throttled frame is over.</p>
 <p><code>finishInteraction()</code> will decrease throttling mode dependency counter, and when this counter gets to zero, it will
@@ -319,7 +319,7 @@ disable throttling mode. It also removes flag indicating that component should b
         <a href="../advanced/02_scheduler.html" class="navigation navigation-prev " aria-label="Previous page: Scheduler"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../advanced/04_virtual_dom.html" class="navigation navigation-next " aria-label="Next page: Virtual DOM advanced techniques"><i class="fa fa-angle-right"></i></a>
+        <a href="../advanced/04_virtual_dom.html" class="navigation navigation-next " aria-label="Next page: Virtual DOM"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
