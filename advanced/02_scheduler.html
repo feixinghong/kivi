@@ -53,7 +53,7 @@
         data-chapter-title="Scheduler"
         data-filepath="advanced/02_scheduler.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 08:43:09 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 09:18:12 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -273,19 +273,15 @@ and then switching between read and write tasks until there are no tasks left.</
 <code>scheduler.nextFrame()</code> for the next frame.</p>
 <p>Each frame task group provides different queues for components, DOM read and write tasks, and tasks that will be
 executed after all other tasks are finished:</p>
-<ul>
-<li><code>scheduler.currentFrame().updateComponent(c: Component&lt;any, any&gt;)</code></li>
-<li><code>scheduler.currentFrame().read(cb: () =&gt; void)</code></li>
-<li><code>scheduler.currentFrame().write(cb: () =&gt; void)</code></li>
-<li><code>scheduler.currentFrame().after(cb: () =&gt; void)</code></li>
-</ul>
-<h2 id="microtasks-and-macrotasks">Microtasks and Macrotasks</h2>
+<pre><code>scheduler.currentFrame().updateComponent(c: Component&lt;any, any&gt;);
+scheduler.currentFrame().read(cb: () =&gt; void);
+scheduler.currentFrame().write(cb: () =&gt; void);
+scheduler.currentFrame().after(cb: () =&gt; void);
+</code></pre><h2 id="microtasks-and-macrotasks">Microtasks and Macrotasks</h2>
 <p>Scheduler also provides interface for adding microtasks and macrotasks into browser event loop.</p>
-<ul>
-<li><code>scheduler.scheduleMicrotask(cb: () =&gt; void)</code></li>
-<li><code>scheduler.scheduleMacrotask(cb: () =&gt; void)</code></li>
-</ul>
-<h2 id="monotonically-increasing-clock">Monotonically increasing clock</h2>
+<pre><code>scheduler.scheduleMicrotask(cb: () =&gt; void)`
+scheduler.scheduleMacrotask(cb: () =&gt; void)`
+</code></pre><h2 id="monotonically-increasing-clock">Monotonically increasing clock</h2>
 <p>Each time scheduler finishes executing tasks from one of the queues, it increments internal clock. This clock can be
 used to implement efficient checks in components to detect which input parameter has been changed since the last
 update.</p>

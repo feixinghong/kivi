@@ -53,7 +53,7 @@
         data-chapter-title="Virtual DOM advanced techniques"
         data-filepath="advanced/04_virtual_dom.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 08:43:09 GMT+0600 (NOVT)"
+        data-revision="Thu May 12 2016 09:18:12 GMT+0600 (NOVT)"
         data-innerlanguage="">
     
 
@@ -262,9 +262,46 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="virtual-dom-advanced-techniques">Virtual DOM advanced techniques</h1>
-<p>WIP</p>
-<h2 id="keep-alive">Keep Alive</h2>
 <h2 id="bind-once">Bind Once</h2>
+<p>Bind once is a similar technique to shallow updates with a more fine-grained control.</p>
+<pre><code class="lang-ts">createVElement(<span class="hljs-string">&quot;div&quot;</span>).children([
+  Header.createVNode({<span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;MyCompany&quot;</span>}).bindOnce(),
+  Content.createVNode(content),
+  Footer.createVNode({<span class="hljs-string">&quot;key&quot;</span>: <span class="hljs-string">&quot;value&quot;</span>}).bindOnce(),
+]);
+</code></pre>
+<h2 id="static-nodes">Static Nodes</h2>
+<p>When some part of component is just a large static block, it is possible to prevent reconciliation algorithm from
+diffing it by reusing the same virtual node on each render. For example:</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;<span class="hljs-built_in">any</span>, { node: VNode }&gt;()
+  .init((c) =&gt; {
+    c.state = {
+      node: createVElement(<span class="hljs-string">&quot;div&quot;</span>).children(<span class="hljs-string">&quot;pretend that there is some heavy content...&quot;</span>),
+    };
+  })
+  .vRender((c, root) =&gt; {
+    root.children([
+      createVElement(<span class="hljs-string">&quot;section&quot;</span>).className(<span class="hljs-string">&quot;header&quot;</span>),
+      c.state.node,
+      createVElement(<span class="hljs-string">&quot;section&quot;</span>).className(<span class="hljs-string">&quot;footer&quot;</span>),
+    ]);
+  });
+</code></pre>
+<h2 id="keep-alive-experimental">Keep Alive <strong>EXPERIMENTAL</strong></h2>
+<p>Keep alive prevents reconciliation algorithm from disposing components, so when they are removed from the document,
+instead of disposing them, they are detached.</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;{ showChild: <span class="hljs-built_in">boolean</span> }, { aliveNode: VNode }&gt;()
+  .init((c) =&gt; {
+    c.state = {
+      aliveNode: ChildComponent.createVNode().keepAlive(),
+    };
+  })
+  .vRender((c, root) =&gt; {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.showChild) {
+      root.children([c.state.aliveNode]);
+    }
+  });
+</code></pre>
 
                     
                     </section>
