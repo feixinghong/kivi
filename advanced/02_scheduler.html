@@ -53,7 +53,7 @@
         data-chapter-title="Scheduler"
         data-filepath="advanced/02_scheduler.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 10:58:15 GMT+0600 (NOVT)"
+        data-revision="Wed Jul 13 2016 18:30:27 GMT+0600 (+06)"
         data-innerlanguage="">
     
 
@@ -208,21 +208,6 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="advanced/05_container_manager.html">
-            
-                
-                    <a href="../advanced/05_container_manager.html">
-                
-                        <i class="fa fa-check"></i>
-                        
-                            <b>3.5.</b>
-                        
-                        Container Manager
-                    </a>
-            
-            
-        </li>
-    
 
             </ul>
             
@@ -264,55 +249,55 @@
                         <h1 id="scheduler">Scheduler</h1>
 <p>Kivi scheduler is responsible for executing frame tasks like updating components, reading from DOM, executing
 microtasks and macrotasks.</p>
-<p>When kivi library is loaded, it automatically instantiates a global scheduler instance. To get access to the scheduler
-instance, import it with <code>import {scheduler} from &quot;kivi&quot;</code>.</p>
 <h2 id="frame-tasks">Frame tasks</h2>
 <p>Frame tasks will be executed in batches, starting with updating components sorted by their depth in components tree,
 and then switching between read and write tasks until there are no tasks left.</p>
-<p>There are two methods for accesing frame tasks: <code>scheduler.currentFrame()</code> to get task group for the current frame, and
-<code>scheduler.nextFrame()</code> for the next frame.</p>
+<p>There are two functions for accesing frame tasks: <code>currentFrame()</code> to get task group for the current frame, and
+<code>nextFrame()</code> for the next frame.</p>
 <p>Each frame task group provides different queues for components, DOM read and write tasks, and tasks that will be
 executed after all other tasks are finished:</p>
-<pre><code>scheduler.currentFrame().updateComponent(c: Component&lt;any, any&gt;);
-scheduler.currentFrame().read(cb: () =&gt; void);
-scheduler.currentFrame().write(cb: () =&gt; void);
-scheduler.currentFrame().after(cb: () =&gt; void);
+<pre><code>currentFrame().updateComponent(c: Component&lt;any, any&gt;);
+currentFrame().read(task: () =&gt; void);
+currentFrame().write(task: () =&gt; void);
+currentFrame().after(task: () =&gt; void);
 </code></pre><h2 id="microtasks-and-macrotasks">Microtasks and Macrotasks</h2>
 <p>Scheduler also provides interface for adding microtasks and macrotasks into browser event loop.</p>
-<pre><code>scheduler.scheduleMicrotask(cb: () =&gt; void)`
-scheduler.scheduleMacrotask(cb: () =&gt; void)`
+<pre><code>scheduleMicrotask(cb: () =&gt; void)`
+scheduleMacrotask(cb: () =&gt; void)`
 </code></pre><h2 id="monotonically-increasing-clock">Monotonically increasing clock</h2>
 <p>Each time scheduler finishes executing tasks from one of the queues, it increments internal clock. This clock can be
 used to implement efficient checks in components to detect which input parameter has been changed since the last
 update.</p>
 <p>For example:</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">class</span> Data {
+<pre><code class="lang-ts"><span class="hljs-keyword">import</span> {clock} from <span class="hljs-string">&quot;kivi&quot;</span>;
+
+<span class="hljs-keyword">class</span> Data {
   mtime: <span class="hljs-built_in">number</span>;
   value: <span class="hljs-built_in">number</span>;
 
   <span class="hljs-constructor"><span class="hljs-keyword">constructor</span>(value: number) </span>{
-    <span class="hljs-keyword">this</span>.mtime = scheduler.clock;
+    <span class="hljs-keyword">this</span>.mtime = clock();
     <span class="hljs-keyword">this</span>.value = value;
   }
 
   setValue(newValue: <span class="hljs-built_in">number</span>) {
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.value !== newValue) {
       <span class="hljs-keyword">this</span>.value = newValue;
-      <span class="hljs-keyword">this</span>.mtime = scheduler.clock;
+      <span class="hljs-keyword">this</span>.mtime = clock();
     }
   }
 }
 
 <span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;Data, <span class="hljs-built_in">any</span>&gt;()
-  .newPropsReceived((c, newProps) =&gt; {
+  .newPropsReceived((c, oldProps, newProps) =&gt; {
     <span class="hljs-keyword">if</span> (c.mtime &lt; newProps.mtime) {
       c.markDirty();
     }
   });
 </code></pre>
 <p>Here we need to check if component&apos;s <code>mtime</code> property is older than <code>mtime</code> in a data object, and if it is older,
-we are marking component as dirty. When component finished update, it will automatically set its <code>mtime</code> to the current
-<code>scheduler.clock</code> value.</p>
+we are marking component as dirty. When component finishes update, it will automatically set its <code>mtime</code> to the current
+<code>clock()</code> value.</p>
 <h2 id="incremental-rendering">Incremental rendering</h2>
 <p>Incremental rendering is a technique to throttle frame tasks. Scheduler will have a small timeframe to perform frame
 tasks on each frame. When timeframe ends, it stops updating and waits for the next frame, scheduler will incrementally

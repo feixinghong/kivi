@@ -51,7 +51,7 @@
         data-chapter-title="Introduction"
         data-filepath="README.md"
         data-basepath="."
-        data-revision="Thu May 12 2016 10:58:15 GMT+0600 (NOVT)"
+        data-revision="Wed Jul 13 2016 18:30:27 GMT+0600 (+06)"
         data-innerlanguage="">
     
 
@@ -206,21 +206,6 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="advanced/05_container_manager.html">
-            
-                
-                    <a href="./advanced/05_container_manager.html">
-                
-                        <i class="fa fa-check"></i>
-                        
-                            <b>3.5.</b>
-                        
-                        Container Manager
-                    </a>
-            
-            
-        </li>
-    
 
             </ul>
             
@@ -269,12 +254,12 @@ manipulations.</p>
 <p>Simple application with a component that prints &quot;Hello World&quot;.</p>
 <pre><code class="lang-js"><span class="hljs-keyword">import</span> {ComponentDescriptor, injectComponent} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;kivi&quot;</span>;
 
-<span class="hljs-keyword">const</span> HelloWorld = <span class="hljs-keyword">new</span> ComponentDescriptor()
-  .vRender((c, root) =&gt; {
-    root.children(<span class="hljs-string">`Hello <span class="hljs-subst">${c.props}</span>`</span>);
+<span class="hljs-keyword">const</span> Main = <span class="hljs-keyword">new</span> ComponentDescriptor()
+  .update((c, props) =&gt; {
+    c.vSync(c.createVRoot().children(<span class="hljs-string">`Hello <span class="hljs-subst">${props.name}</span>`</span>));
   });
 
-injectComponent(Main, <span class="hljs-built_in">document</span>.body, <span class="hljs-string">&quot;World&quot;</span>);
+injectComponent(Main, <span class="hljs-built_in">document</span>.body, {name: <span class="hljs-string">&quot;World&quot;</span>});
 </code></pre>
 <h2 id="performance">Performance</h2>
 <p>Kivi has one of the fastest Virtual DOM implementations, it was designed from the ground up with high performance in
@@ -283,7 +268,8 @@ mind.</p>
 <ul>
 <li><a href="https://localvoid.github.io/uibench/" target="_blank">uibench</a></li>
 <li><a href="https://localvoid.github.io/kivi-dbmonster/" target="_blank">dbmonster</a></li>
-<li><a href="https://localvoid.github.io/kivi-dbmonster/?incremental=5" target="_blank">dbmonster (incremental)</a></li>
+<li><a href="https://localvoid.github.io/kivi-dbmonster/incremental.html" target="_blank">dbmonster (incremental)</a></li>
+<li><a href="https://localvoid.github.io/kivi-dbmonster/10k.html" target="_blank">10k spans</a></li>
 </ul>
 
                     

@@ -53,7 +53,7 @@
         data-chapter-title="Virtual DOM"
         data-filepath="basics/02_virtual_dom.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 10:58:15 GMT+0600 (NOVT)"
+        data-revision="Wed Jul 13 2016 18:30:27 GMT+0600 (+06)"
         data-innerlanguage="">
     
 
@@ -208,21 +208,6 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="advanced/05_container_manager.html">
-            
-                
-                    <a href="../advanced/05_container_manager.html">
-                
-                        <i class="fa fa-check"></i>
-                        
-                            <b>3.5.</b>
-                        
-                        Container Manager
-                    </a>
-            
-            
-        </li>
-    
 
             </ul>
             
@@ -281,12 +266,6 @@ function createVText(content: string): VNode;
 
 // Creates a virtual node representing a Component&apos;s root element.
 function createVRoot(): VNode;
-
-// Creates a virtual node representing an Input Element with text value.
-function createVTextInput(): VNode;
-
-// Creates a virtual node representing an Input Element with checked value.
-function createVCheckedInput(): VNode;
 </code></pre><h3 id="setting-vnode-properties">Setting VNode properties</h3>
 <p>Virtual node instance has many different methods to set properties, all property methods support method chaining. For
 example:</p>
@@ -316,11 +295,11 @@ child should have a <code>key</code> property and it should be unique among its 
     createVElement(<span class="hljs-string">&quot;span&quot;</span>).key(<span class="hljs-number">3</span>).children(<span class="hljs-string">&quot;3&quot;</span>),
   ]);
 </code></pre>
-<p>To find minimum number of move operations, kivi reconciliation algorithm is using
-<a href="https://en.wikipedia.org/wiki/Longest_increasing_subsequence" target="_blank">Longest Increasing Subsequence</a> algorithm. It is highly
-optimized and in most real world situations that involve simple moves of one or two nodes it won&apos;t perform LIS
-computation. See <a href="https://localvoid.github.io/uibench/" target="_blank">uibench</a> benchmark to find out how kivi handles different use
-cases.</p>
+<p>To learn more about kivi children reconciliation algorithm, read
+<a href="https://github.com/localvoid/kivi/blob/569ba49acd7d5c8809cfc621eb02ec6206f0d3c9/lib/reconciler.ts#L410-L641" target="_blank">the comment</a>
+in the source code, it explains how kivi is able to find minimum number of DOM operations. This algorithm is highly
+optimized and runs really fast in most real world use cases, see <a href="https://localvoid.github.io/uibench/" target="_blank">uibench</a>
+benchmark to find out how kivi handles different use cases.</p>
 
                     
                     </section>

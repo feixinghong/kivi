@@ -53,7 +53,7 @@
         data-chapter-title="Getting Started"
         data-filepath="01_getting_started.md"
         data-basepath="."
-        data-revision="Thu May 12 2016 10:58:15 GMT+0600 (NOVT)"
+        data-revision="Wed Jul 13 2016 18:30:27 GMT+0600 (+06)"
         data-innerlanguage="">
     
 
@@ -208,21 +208,6 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="advanced/05_container_manager.html">
-            
-                
-                    <a href="./advanced/05_container_manager.html">
-                
-                        <i class="fa fa-check"></i>
-                        
-                            <b>3.5.</b>
-                        
-                        Container Manager
-                    </a>
-            
-            
-        </li>
-    
 
             </ul>
             
@@ -310,11 +295,11 @@ application. But it works perfectly fine with <a href="http://jspm.io/" target="
 <pre><code class="lang-js"><span class="hljs-keyword">import</span> {ComponentDescriptor, injectComponent} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;kivi&quot;</span>;
 
 <span class="hljs-keyword">const</span> Main = <span class="hljs-keyword">new</span> ComponentDescriptor()
-  .update((c) =&gt; {
-    c.element.textContent = <span class="hljs-string">`Hello <span class="hljs-subst">${c.props}</span>`</span>;
+  .update((c, props) =&gt; {
+    c.element.textContent = <span class="hljs-string">`Hello <span class="hljs-subst">${props.text}</span>`</span>;
   });
 
-injectComponent(Main, <span class="hljs-built_in">document</span>.body, <span class="hljs-string">&quot;World&quot;</span>);
+injectComponent(Main, <span class="hljs-built_in">document</span>.body, {text: <span class="hljs-string">&quot;World&quot;</span>});
 </code></pre>
 <h2 id="edit-rollupconfigjs-file">Edit <code>rollup.config.js</code> file</h2>
 <p>Rollup config file for production builds:</p>

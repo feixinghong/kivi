@@ -53,7 +53,7 @@
         data-chapter-title="Components"
         data-filepath="advanced/03_components.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 10:58:15 GMT+0600 (NOVT)"
+        data-revision="Wed Jul 13 2016 18:30:27 GMT+0600 (+06)"
         data-innerlanguage="">
     
 
@@ -208,21 +208,6 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="advanced/05_container_manager.html">
-            
-                
-                    <a href="../advanced/05_container_manager.html">
-                
-                        <i class="fa fa-check"></i>
-                        
-                            <b>3.5.</b>
-                        
-                        Container Manager
-                    </a>
-            
-            
-        </li>
-    
 
             </ul>
             
@@ -287,19 +272,6 @@ method <code>startUpdateEachFrame()</code>. For example:</p>
   });
 </code></pre>
 <p><code>stopUpdateEachFrame()</code> method will remove component from the list of components that should be updated on each frame.</p>
-<h2 id="shallow-update">Shallow update</h2>
-<p>Shallow updates will perform updates on a subtree of nodes without binding new props and triggering updates for
-subcomponents.</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor()
-  .update((c) =&gt; {
-    c.advancedVSync(RenderFlags.ShallowUpdate, c.createVRoot().children([
-      ChildComponent.createVRoot(),
-      ChildComponent.createVRoot(),
-    ]));
-  });
-</code></pre>
-<p><code>RenderFlags</code> also has a flag for shallow rendering <code>ShallowRender</code> that prevents from rendering subcomponents when they
-are created for the first time.</p>
 <h2 id="incremental-rendering-experimental">Incremental rendering **EXPERIMENTAL**</h2>
 <p>Components provide two methods that can trigger incremental rendering: <code>startInteraction()</code> and <code>finishInteraction()</code>.</p>
 <p><code>startInteraction()</code> will enable throttling mode in the scheduler, increment its dependency counter, and mark component

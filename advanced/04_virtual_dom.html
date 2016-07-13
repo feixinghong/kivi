@@ -37,8 +37,6 @@
         
     
     
-    <link rel="next" href="../advanced/05_container_manager.html" />
-    
     
     <link rel="prev" href="../advanced/03_components.html" />
     
@@ -53,7 +51,7 @@
         data-chapter-title="Virtual DOM"
         data-filepath="advanced/04_virtual_dom.md"
         data-basepath=".."
-        data-revision="Thu May 12 2016 10:58:15 GMT+0600 (NOVT)"
+        data-revision="Wed Jul 13 2016 18:30:27 GMT+0600 (+06)"
         data-innerlanguage="">
     
 
@@ -208,21 +206,6 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="advanced/05_container_manager.html">
-            
-                
-                    <a href="../advanced/05_container_manager.html">
-                
-                        <i class="fa fa-check"></i>
-                        
-                            <b>3.5.</b>
-                        
-                        Container Manager
-                    </a>
-            
-            
-        </li>
-    
 
             </ul>
             
@@ -273,33 +256,28 @@
 <h2 id="static-nodes">Static Nodes</h2>
 <p>When some part of component is just a large static block, it is possible to prevent reconciliation algorithm from
 diffing it by reusing the same virtual node on each render. For example:</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;<span class="hljs-built_in">any</span>, { node: VNode }&gt;()
-  .init((c) =&gt; {
-    c.state = {
-      node: createVElement(<span class="hljs-string">&quot;div&quot;</span>).children(<span class="hljs-string">&quot;pretend that there is some heavy content...&quot;</span>),
-    };
-  })
-  .vRender((c, root) =&gt; {
-    root.children([
-      createVElement(<span class="hljs-string">&quot;section&quot;</span>).className(<span class="hljs-string">&quot;header&quot;</span>),
-      c.state.node,
-      createVElement(<span class="hljs-string">&quot;section&quot;</span>).className(<span class="hljs-string">&quot;footer&quot;</span>),
-    ]);
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;<span class="hljs-built_in">void</span>, {node: VNode}&gt;()
+  .createState((c) =&gt; ({node: createVElement(<span class="hljs-string">&quot;div&quot;</span>).children(<span class="hljs-string">&quot;pretend that there is some heavy content...&quot;</span>)}))
+  .update((c, props, state) =&gt; {
+    c.vSync(c.createVRoot()
+      .children([
+        createVElement(<span class="hljs-string">&quot;section&quot;</span>).className(<span class="hljs-string">&quot;header&quot;</span>),
+        state.node,
+        createVElement(<span class="hljs-string">&quot;section&quot;</span>).className(<span class="hljs-string">&quot;footer&quot;</span>),
+      ]));
   });
 </code></pre>
-<h2 id="keep-alive-experimental">Keep Alive **EXPERIMENTAL**</h2>
+<h2 id="keep-alive">Keep Alive</h2>
 <p>Keep alive prevents reconciliation algorithm from disposing components, so when they are removed from the document,
 instead of disposing them, they are detached.</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;{ showChild: <span class="hljs-built_in">boolean</span> }, { aliveNode: VNode }&gt;()
-  .init((c) =&gt; {
-    c.state = {
-      aliveNode: ChildComponent.createVNode().keepAlive(),
-    };
-  })
-  .vRender((c, root) =&gt; {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.showChild) {
-      root.children([c.state.aliveNode]);
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;{showChild: <span class="hljs-built_in">boolean</span>}, {aliveComponent: Component}&gt;()
+  .createState((c) =&gt; ({aliveComponent: ChildComponent.createComponent()}))
+  .update((c, props, state) =&gt; {
+    <span class="hljs-keyword">const</span> root = c.createVRoot();
+    <span class="hljs-keyword">if</span> (props.showChild) {
+      root.children([ChildComponent.createVNode().keepAlive(state.aliveComponent)]);
     }
+    c.vSync(root);
   });
 </code></pre>
 
@@ -312,10 +290,8 @@ instead of disposing them, they are detached.</p>
         </div>
 
         
-        <a href="../advanced/03_components.html" class="navigation navigation-prev " aria-label="Previous page: Components"><i class="fa fa-angle-left"></i></a>
+        <a href="../advanced/03_components.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Components"><i class="fa fa-angle-left"></i></a>
         
-        
-        <a href="../advanced/05_container_manager.html" class="navigation navigation-next " aria-label="Next page: Container Manager"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
