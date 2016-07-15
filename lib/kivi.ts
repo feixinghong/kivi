@@ -46,11 +46,11 @@ export {
   MessageGroup,
   MessageDescriptor,
   Message,
-  ActorDescriptor,
   Actor,
   ActorLink,
   SystemMessageGroup,
   ActorDisposedMessage,
+  spawn,
 } from "./actor";
 
 export {

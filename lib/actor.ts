@@ -36,8 +36,6 @@ export const enum MessageFlags {
   Trace         = 1,
   // Message were created from an action initiated by user.
   UserInitiated = 1 << 1,
-  // Message were consumed by an actor.
-  Consumed      = 1 << 2,
 }
 
 /**
@@ -50,7 +48,7 @@ let _nextActorId = 0;
  *
  * It is used for assigning user flags at runtime.
  */
-let _nextMessageFlag = 1 << 2;
+let _nextMessageFlag = 1 << 1;
 
 /**
  * Message group registry that is used in DEBUG mode to check that all message names are unique.
@@ -63,7 +61,7 @@ export const MessageGroupRegistry = ("<@KIVI_DEBUG@>" !== "DEBUG_DISABLED") ?
  * Actor registry that is used in DEBUG mode.
  */
 export const ActorRegistry = ("<@KIVI_DEBUG@>" !== "DEBUG_DISABLED") ?
-  new Map<number, Actor<any, any>>() :
+  new Map<number, Actor<any>>() :
   undefined;
 
 /**
@@ -85,16 +83,9 @@ export function acquireMessageFlag(): number {
 export const enum ActorFlags {
   // Actor is registered in the scheduler actor task queue.
   Active          = 1,
-  // Inbox has an incoming message.
-  IncomingMessage = 1 << 1,
   // Actor is disposed.
-  Disposed        = 1 << 2,
+  Disposed        = 1 << 1,
 }
-
-/**
- * Message handler function.
- */
-export type ActorMessageHandler<P, S> = (actor: Actor<P, S>, message: Message<any>, props: P, state: S) => S;
 
 /**
  * Message group.
@@ -317,20 +308,20 @@ export const SystemMessageGroup = new MessageGroup(getMessageGroupName("system")
 /**
  * System message: actor disposed.
  */
-export const ActorDisposedMessage = SystemMessageGroup.create<Actor<any, any>>(getMessageName("actorDisposed"));
+export const ActorDisposedMessage = SystemMessageGroup.create<Actor<any>>(getMessageName("actorDisposed"));
 
 /**
  * Link actor `a` to another actor `b`.
  */
 export class ActorLink {
-  readonly a: Actor<any, any>;
-  readonly b: Actor<any, any>;
+  readonly a: Actor<any>;
+  readonly b: Actor<any>;
   _prev: ActorLink | null;
   _next: ActorLink | null;
 
   private _isCanceled: boolean;
 
-  constructor(a: Actor<any, any>, b: Actor<any, any>) {
+  constructor(a: Actor<any>, b: Actor<any>) {
     this.a = a;
     this.b = b;
 
@@ -371,101 +362,17 @@ export class ActorLink {
 }
 
 /**
- * Actor descriptor.
- *
- *     const StoreActor = new ActorDescriptor<Props, State>()
- *       .handleMessage((message, state) => {
- *         if (message.descriptor === DeleteItemMessage) {
- *           state.removeItem(message.payload as number);
- *         }
- *         return state;
- *       });
+ * Actor actions.
  */
-export class ActorDescriptor<P, S> {
-  /**
-   * Flags, see `ActorDescriptorFlags` for details.
-   */
-  _flags: number;
-  /**
-   * Flags that will be marked on actor instances, see `ActorFlags` for details.
-   */
-  _markFlags: number;
-  /**
-   * Create state handler.
-   */
-  _createState: ((actor: Actor<P, S>, props: P) => S) | null;
-  /**
-   * Init handler.
-   */
-  _init: ((actor: Actor<P, S>, props: P, state: S) => void) | null;
-  /**
-   * Message handler.
-   */
-  _handleMessage: ActorMessageHandler<P, S> | null;
-  /**
-   * Disposed handler.
-   */
-  _disposed: ((actor: Actor<P, S>, props: P, state: S) => void) | null;
-
-  constructor() {
-    this._flags = 0;
-    this._markFlags = 0;
-    this._createState = null;
-    this._init = null;
-    this._handleMessage = null;
-  }
-
-  /**
-   * Create a new actor.
-   */
-  create(props?: P): Actor<P, S> {
-    const actor = new Actor<P, S>(this, props, this._markFlags);
-    if (this._createState !== null) {
-      actor.state = this._createState(actor, actor.props!);
-    }
-    if (this._init !== null) {
-      this._init(actor, actor.props!, actor.state!);
-    }
-    return actor;
-  }
-
-  /**
-   * Create state handler.
-   */
-  createState(handler: (actor: Actor<P, S>, props: P) => S): ActorDescriptor<P, S> {
-    this._createState = handler;
-    return this;
-  }
-
-  /**
-   * Init handler.
-   */
-  init(handler: (actor: Actor<P, S>, props: P, state: S) => void): ActorDescriptor<P, S> {
-    this._init = handler;
-    return this;
-  }
-
-  /**
-   * Handle message handler.
-   */
-  handleMessage(handler: ActorMessageHandler<P, S>): ActorDescriptor<P, S> {
-    this._handleMessage = handler;
-    return this;
-  }
-
-  /**
-   * Disposed handler.
-   */
-  disposed(handler: (actor: Actor<P, S>, props: P, state: S) => void): ActorDescriptor<P, S> {
-    this._disposed = handler;
-    return this;
-  }
+export const enum ActorAction {
+  Init        = 0,
+  RecvMessage = 1,
 }
 
 /**
  * Actor.
  */
-export class Actor<P, S> {
+export class Actor<S> {
   /**
    * Unique Id.
    */
@@ -475,13 +382,13 @@ export class Actor<P, S> {
    */
   _flags: number;
   /**
-   * Actor descriptor.
+   * Action, see `ActionAction` for detail.
    */
-  readonly descriptor: ActorDescriptor<P, S>;
+  _action: ActorAction;
   /**
-   * Props.
+   * Main function.
    */
-  props: P | null;
+  _iter: IterableIterator<ActorAction> | null;
   /**
    * State.
    */
@@ -495,11 +402,11 @@ export class Actor<P, S> {
    */
   _links: ActorLink | null;
 
-  constructor(descriptor: ActorDescriptor<P, S>, props: P | undefined, flags: number) {
+  constructor() {
     this.id = _nextActorId++;
-    this._flags = flags;
-    this.descriptor = descriptor;
-    this.props = props === undefined ? null : props;
+    this._flags = 0;
+    this._action = ActorAction.Init;
+    this._iter = null;
     this.state = null;
     this._inbox = [];
     this._links = null;
@@ -510,13 +417,6 @@ export class Actor<P, S> {
   }
 
   /**
-   * Get current state.
-   */
-  getState(): S {
-    return this.state!;
-  }
-
-  /**
    * Send a message to an actor.
    */
   send(message: Message<any>): void {
@@ -524,9 +424,16 @@ export class Actor<P, S> {
   }
 
   /**
+   * Recieve a message.
+   */
+  recv(): ActorAction {
+    return ActorAction.RecvMessage;
+  }
+
+  /**
    * Link with another actor.
    */
-  link(actor: Actor<any, any>): ActorLink {
+  link(actor: Actor<any>): ActorLink {
     if ("<@KIVI_DEBUG@>" !== "DEBUG_DISABLED") {
       let link = this._links;
       while (link !== null) {
@@ -539,62 +446,79 @@ export class Actor<P, S> {
 
     return new ActorLink(this, actor);
   }
+}
 
-  /**
-   * Dispose.
-   */
-  dispose(): void {
-    if ("<@KIVI_DEBUG@>" !== "DEBUG_DISABLED") {
-      ActorRegistry!.delete(this.id);
+/**
+ * Dispose an actor.
+ */
+function disposeActor(actor: Actor<any>): void {
+  if ("<@KIVI_DEBUG@>" !== "DEBUG_DISABLED") {
+    ActorRegistry!.delete(actor.id);
 
-      if ((this._flags & ActorFlags.Disposed) !== 0) {
-        throw new Error("Failed to dispose an actor: actor is already disposed.");
-      }
+    if ((actor._flags & ActorFlags.Disposed) !== 0) {
+      throw new Error("Failed to dispose an actor: actor is already disposed.");
     }
+  }
 
-    this._flags |= ActorFlags.Disposed;
-    let link = this._links;
-    if (link !== null) {
-      const msg = ActorDisposedMessage.create(this);
-      do {
-        link.b.send(msg);
-        link = link._next;
-      } while (link !== null);
-    }
-    if (this.descriptor._disposed !== null) {
-      this.descriptor._disposed(this, this.props!, this.state!);
-    }
+  actor._flags |= ActorFlags.Disposed;
+  let link = actor._links;
+  if (link !== null) {
+    const msg = ActorDisposedMessage.create(actor);
+    do {
+      link.b.send(msg);
+      link = link._next;
+    } while (link !== null);
   }
 }
 
 /**
  * Send message to an actor.
  */
-export function sendMessage(actor: Actor<any, any>, message: Message<any>): void {
+export function sendMessage(actor: Actor<any>, message: Message<any>): void {
   if ((actor._flags & ActorFlags.Disposed) === 0) {
     if ((actor._flags & ActorFlags.Active) === 0) {
       scheduleActorExecution(actor);
       actor._flags |= ActorFlags.Active;
     }
-    actor._flags |= ActorFlags.IncomingMessage;
     actor._inbox.push(message);
   }
 }
 
 /**
- * Execute actor.
+ * Spawn new actor.
  */
-export function execActor(actor: Actor<any, any>): void {
-  while ((actor._flags & ActorFlags.IncomingMessage) !== 0) {
-    const inbox = actor._inbox;
-    actor._inbox = [];
-    actor._flags &= ~ActorFlags.IncomingMessage;
-    for (let i = 0; i < inbox.length; i++) {
-      const msg = inbox[i];
-      msg._flags |= MessageFlags.Consumed;
-      actor.state = actor.descriptor._handleMessage!(actor, msg, actor.props, actor.state);
+export function spawn<P>(main: (actor: Actor<any>, props?: P) => IterableIterator<ActorAction>, props?: P): Actor<any> {
+  const actor = new Actor();
+  actor._iter = main(actor, props);
+  scheduleActorExecution(actor);
+  actor._flags |= ActorFlags.Active;
+  return actor;
+}
+
+/**
+ * Execute an actor.
+ */
+export function execActor(actor: Actor<any>): void {
+  let next: IteratorResult<ActorAction> | undefined;
+
+  do {
+    if (actor._action === ActorAction.RecvMessage) {
+      if (actor._inbox.length > 0) {
+        // TODO: optimize message consuming
+        next = actor._iter!.next(actor._inbox.shift());
+      }
+    } else {
+      next = actor._iter!.next();
     }
-  }
+    if (next !== undefined) {
+      if (!next.done) {
+        actor._action = next.value;
+        continue;
+      }
+      disposeActor(actor);
+    }
+  } while (false);
+
   actor._flags &= ~ActorFlags.Active;
 }
 

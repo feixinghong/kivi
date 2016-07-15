@@ -222,7 +222,7 @@ const scheduler = {
   currentFrame: new FrameTasksGroup(),
   nextFrame: new FrameTasksGroup(),
   updateComponents: [] as Component<any, any>[],
-  activeActors: [] as Actor<any, any>[],
+  activeActors: [] as Actor<any>[],
   microtaskNode: document.createTextNode(""),
   microtaskToggle: 0,
   macrotaskMessage: "__kivi" + Math.random(),
@@ -484,7 +484,7 @@ export function nextFrame(): FrameTasksGroup {
 /**
  * Add actor for an execution.
  */
-export function scheduleActorExecution(actor: Actor<any, any>): void {
+export function scheduleActorExecution(actor: Actor<any>): void {
   requestMicrotaskExecution();
   scheduler.activeActors.push(actor);
 }
