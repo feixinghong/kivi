@@ -53,7 +53,7 @@
         data-chapter-title="Getting Started"
         data-filepath="01_getting_started.md"
         data-basepath="."
-        data-revision="Mon Aug 01 2016 18:08:29 GMT+0700 (+07)"
+        data-revision="Wed Aug 03 2016 18:34:02 GMT+0700 (+07)"
         data-innerlanguage="">
     
 
@@ -213,6 +213,34 @@
             
         </li>
     
+        <li class="chapter " data-level="4" >
+            
+            <span><b>4.</b> Experimental</span>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="experimental/01_incremental_rendering.html">
+            
+                
+                    <a href="./experimental/01_incremental_rendering.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Incremental Rendering
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
 
 
             
@@ -273,8 +301,8 @@ $ <span class="hljs-built_in">cd</span> kivi-project
 application. But it works perfectly fine with <a href="http://jspm.io/" target="_blank">jspm</a>, <a href="http://browserify.org/" target="_blank">browserify</a> or
 <a href="https://webpack.github.io/" target="_blank">Webpack</a> bundlers and <a href="https://gitlab.com/Rich-Harris/buble" target="_blank">Buble</a> or
 <a href="https://github.com/google/closure-compiler" target="_blank">Google Closure Compiler</a> es6 compilers.</p>
-<pre><code class="lang-sh">$ npm install --save-dev rollup rollup-plugin-replace rollup-plugin-node-resolve \
-                         rollup-plugin-babel babel babel-preset-es2015-rollup
+<pre><code class="lang-sh">$ npm install --save-dev rollup rollup-plugin-{replace,node-resolve,babel}
+                         babel babel-preset-es2015-rollup
 </code></pre>
 <h2 id="edit-webindexhtml-file">Edit <code>web/index.html</code> file</h2>
 <pre><code class="lang-html"><span class="hljs-doctype">&lt;!doctype html&gt;</span>
@@ -311,9 +339,7 @@ injectComponent(Main, <span class="hljs-built_in">document</span>.body, {text: <
   entry: <span class="hljs-string">&quot;src/main.js&quot;</span>,
   format: <span class="hljs-string">&quot;umd&quot;</span>,
   plugins: [
-    npm({
-      jsnext: <span class="hljs-literal">true</span>
-    }),
+    npm(),
     babel({
       presets: [<span class="hljs-string">&quot;es2015-rollup&quot;</span>]
     }),
@@ -338,9 +364,7 @@ injectComponent(Main, <span class="hljs-built_in">document</span>.body, {text: <
   entry: <span class="hljs-string">&quot;src/main.js&quot;</span>,
   format: <span class="hljs-string">&quot;umd&quot;</span>,
   plugins: [
-    npm({
-      jsnext: <span class="hljs-literal">true</span>
-    }),
+    npm(),
     babel({
       presets: [<span class="hljs-string">&quot;es2015-rollup&quot;</span>],
     }),

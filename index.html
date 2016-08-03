@@ -51,7 +51,7 @@
         data-chapter-title="Introduction"
         data-filepath="README.md"
         data-basepath="."
-        data-revision="Mon Aug 01 2016 18:08:29 GMT+0700 (+07)"
+        data-revision="Wed Aug 03 2016 18:34:02 GMT+0700 (+07)"
         data-innerlanguage="">
     
 
@@ -211,6 +211,34 @@
             
         </li>
     
+        <li class="chapter " data-level="4" >
+            
+            <span><b>4.</b> Experimental</span>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="experimental/01_incremental_rendering.html">
+            
+                
+                    <a href="./experimental/01_incremental_rendering.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Incremental Rendering
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
 
 
             
@@ -256,7 +284,7 @@ manipulations.</p>
 
 <span class="hljs-keyword">const</span> Main = <span class="hljs-keyword">new</span> ComponentDescriptor()
   .update((c, props) =&gt; {
-    c.vSync(c.createVRoot().children(<span class="hljs-string">`Hello <span class="hljs-subst">${props.name}</span>`</span>));
+    c.sync(c.createVRoot().children(<span class="hljs-string">`Hello <span class="hljs-subst">${props.name}</span>`</span>));
   });
 
 injectComponent(Main, <span class="hljs-built_in">document</span>.body, {name: <span class="hljs-string">&quot;World&quot;</span>});

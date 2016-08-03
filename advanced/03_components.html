@@ -53,7 +53,7 @@
         data-chapter-title="Components"
         data-filepath="advanced/03_components.md"
         data-basepath=".."
-        data-revision="Mon Aug 01 2016 18:08:29 GMT+0700 (+07)"
+        data-revision="Wed Aug 03 2016 18:34:02 GMT+0700 (+07)"
         data-innerlanguage="">
     
 
@@ -213,6 +213,34 @@
             
         </li>
     
+        <li class="chapter " data-level="4" >
+            
+            <span><b>4.</b> Experimental</span>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="experimental/01_incremental_rendering.html">
+            
+                
+                    <a href="../experimental/01_incremental_rendering.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Incremental Rendering
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
 
 
             
@@ -256,7 +284,9 @@ recycled pool has any available instance and just reuse it.</p>
 <code>maxRecycled</code> parameter controls the size of recycled pool for this component type.</p>
 <pre><code class="lang-ts"><span class="hljs-keyword">const</span> Button = <span class="hljs-keyword">new</span> ComponentDescriptor()
   .enableComponentRecycling(<span class="hljs-number">100</span>)
-  .vRender((c, root) =&gt; { root.className(<span class="hljs-string">&quot;button&quot;</span>); });
+  .update((c) =&gt; {
+    c.sync(c.createVRoot().className(<span class="hljs-string">&quot;button&quot;</span>));
+  });
 </code></pre>
 <p>Note: kivi library should be compiled with enabled component recycling. To enable recycling, replace all string
 occurences <code>&lt;@KIVI_COMPONENT_RECYCLING@&gt;</code> with <code>COMPONENT_RECYCLING_ENABLED</code>.</p>
@@ -272,12 +302,6 @@ method <code>startUpdateEachFrame()</code>. For example:</p>
   });
 </code></pre>
 <p><code>stopUpdateEachFrame()</code> method will remove component from the list of components that should be updated on each frame.</p>
-<h2 id="incremental-rendering-experimental">Incremental rendering **EXPERIMENTAL**</h2>
-<p>Components provide two methods that can trigger incremental rendering: <code>startInteraction()</code> and <code>finishInteraction()</code>.</p>
-<p><code>startInteraction()</code> will enable throttling mode in the scheduler, increment its dependency counter, and mark component
-as a high priority component. High priority components will be updated even if timeframe for a throttled frame is over.</p>
-<p><code>finishInteraction()</code> will decrease throttling mode dependency counter, and when this counter gets to zero, it will
-disable throttling mode. It also removes flag indicating that component should be a high priority for updates.</p>
 
                     
                     </section>

@@ -53,7 +53,7 @@
         data-chapter-title="Components"
         data-filepath="basics/01_components.md"
         data-basepath=".."
-        data-revision="Mon Aug 01 2016 18:08:29 GMT+0700 (+07)"
+        data-revision="Wed Aug 03 2016 18:34:02 GMT+0700 (+07)"
         data-innerlanguage="">
     
 
@@ -213,6 +213,34 @@
             
         </li>
     
+        <li class="chapter " data-level="4" >
+            
+            <span><b>4.</b> Experimental</span>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="experimental/01_incremental_rendering.html">
+            
+                
+                    <a href="../experimental/01_incremental_rendering.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        Incremental Rendering
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
 
 
             
@@ -279,14 +307,16 @@ difference between them is that root component doesn&apos;t have a parent compon
 
 <span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;Props, State&gt;()
   .canvas()
-  .createState((c, props) =&gt; <span class="hljs-keyword">new</span> State(props))
+  .init((c, props) =&gt; {
+    c.state = <span class="hljs-keyword">new</span> State(props);
+  })
   .update((c, props, state) =&gt; {
     <span class="hljs-keyword">const</span> ctx = c.get2DContext();
     ctx.fillStyle = <span class="hljs-string">&apos;rgba(0, 0, 0, 1)&apos;</span>;
     ctx.fillRect(props.x, props.y, state.xy, state.xy);
   });
 
-<span class="hljs-keyword">const</span> componentInstance = MyComponent.createRootComponent(<span class="hljs-keyword">new</span> Data(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>));
+<span class="hljs-keyword">const</span> componentInstance = MyComponent.createRootComponent(<span class="hljs-keyword">new</span> Props(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>));
 </code></pre>
 <h3 id="setting-component-properties">Setting component properties</h3>
 <p>Component descriptor instance has many different methods to set properties, all property methods support method
@@ -300,11 +330,11 @@ chaining. For example:</p>
 <pre><code>ComponentDescriptor&lt;P, S&gt;.tagName(tagName: string): ComponentDescriptor&lt;P, S&gt;;
 ComponentDescriptor&lt;P, S&gt;.svg(): ComponentDescriptor&lt;P, S&gt;;
 </code></pre><h2 id="using-virtual-dom">Using Virtual DOM</h2>
-<p>To use virtual dom in components, we need to call a <code>vSync</code> method that will sync component&apos;s representation with a
+<p>To use virtual dom in components, we need to call a <code>sync</code> method that will sync component&apos;s representation with a
 virtual dom. For example:</p>
 <pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;{title: <span class="hljs-built_in">string</span>, content: <span class="hljs-built_in">string</span>}, <span class="hljs-built_in">void</span>&gt;()
   .update((c, props) =&gt; {
-    c.vSync(c.createVRoot()
+    c.sync(c.createVRoot()
       .children([
         createVElement(<span class="hljs-string">&quot;h1&quot;</span>).children(props.title),
         createVElement(<span class="hljs-string">&quot;p&quot;</span>).children(props.content),
@@ -329,14 +359,6 @@ virtual dom. For example:</p>
   });
 </code></pre>
 <h2 id="lifecycle-methods">Lifecycle methods</h2>
-<h3 id="createstate">createState</h3>
-<p>Create state handler will be invoked immediately after component is instantiated and it should return initial state.</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>&gt;()
-  .createState((c, props) =&gt; props * props)
-  .update((c, props, state) =&gt; {
-    c.vSync(c.createVRoot().children(state.toString()));
-  });
-</code></pre>
 <h3 id="init">init</h3>
 <p>Init handler will be invoked after component state is created, <code>element</code> and <code>props</code> properties will be
 initialized before init handler is invoked.</p>
@@ -350,17 +372,17 @@ initialized before init handler is invoked.</p>
     });
   })
   .update((c) =&gt; {
-    c.vSync(c.createVRoot().children(<span class="hljs-string">&quot;click me&quot;</span>));
+    c.sync(c.createVRoot().children(<span class="hljs-string">&quot;click me&quot;</span>));
   });
 </code></pre>
 <h3 id="update">update</h3>
 <p>Update handler will be invoked when component gets updated either by binding new props, or when it is registered in
 one of the scheduler component queues.</p>
 <p>Update handler completely overrides default update behavior, so to continue using virtual dom for updates, we can
-use <code>vSync</code> method.</p>
+use <code>sync</code> method.</p>
 <pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;{a: <span class="hljs-built_in">number</span>}, <span class="hljs-built_in">void</span>&gt;()
   .update((c, props, state) =&gt; {
-     c.vSync(c.createVRoot().children(props.a.toString()));
+     c.sync(c.createVRoot().children(props.a.toString()));
   });
 </code></pre>
 <h3 id="attached">attached</h3>
@@ -372,7 +394,7 @@ use <code>vSync</code> method.</p>
     c.subscribe(onChange);
   })
   .update((c) =&gt; {
-     c.vSync(c.createVRoot().children(<span class="hljs-string">&quot;content&quot;</span>));
+     c.sync(c.createVRoot().children(<span class="hljs-string">&quot;content&quot;</span>));
   });
 
 onChange.invalidate();
@@ -380,7 +402,9 @@ onChange.invalidate();
 <h3 id="detached">detached</h3>
 <p>Detached handler will be invoked when component is detached from the document.</p>
 <pre><code class="lang-ts"><span class="hljs-keyword">const</span> MyComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;<span class="hljs-built_in">void</span>, {onResize: (e: Event) =&gt; <span class="hljs-built_in">void</span>}&gt;()
-  .createState((c) =&gt; ({onResize: (e) =&gt; { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;window resized&quot;</span>); }}))
+  .init((c) =&gt; {
+    c.state = {onResize: (e) =&gt; { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;window resized&quot;</span>); }};
+  })
   .attached((c, props, state) =&gt; {
     <span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">&quot;resize&quot;</span>, state.onResize);
   })
@@ -388,7 +412,7 @@ onChange.invalidate();
     <span class="hljs-built_in">window</span>.removeEventListener(state.onResize);
   })
   .update((c) =&gt; {
-     c.vSync(c.createVRoot().children(<span class="hljs-string">&quot;content&quot;</span>));
+     c.sync(c.createVRoot().children(<span class="hljs-string">&quot;content&quot;</span>));
   });
 </code></pre>
 <h3 id="disposed">disposed</h3>
@@ -403,7 +427,7 @@ onChange.invalidate();
     allocatedComponents--;
   })
   .update((c) =&gt; {
-     c.vSync(c.createVRoot().children(<span class="hljs-string">&quot;content&quot;</span>));
+     c.sync(c.createVRoot().children(<span class="hljs-string">&quot;content&quot;</span>));
   });
 </code></pre>
 <h3 id="newpropsreceived">newPropsReceived</h3>
@@ -416,7 +440,7 @@ received props will cause change in component&apos;s representation.</p>
     }
   })
   .update((c) =&gt; {
-     c.vSync(c.createVRoot().children(props.a.toString()));
+     c.sync(c.createVRoot().children(props.a.toString()));
   });
 </code></pre>
 
