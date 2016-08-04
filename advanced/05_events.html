@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Virtual DOM | kivi</title>
+        <title>Events | kivi</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -37,10 +37,10 @@
         
     
     
-    <link rel="next" href="../advanced/01_element_descriptor.html" />
+    <link rel="next" href="../experimental/01_incremental_rendering.html" />
     
     
-    <link rel="prev" href="../basics/01_components.html" />
+    <link rel="prev" href="../advanced/04_virtual_dom.html" />
     
 
         
@@ -49,9 +49,9 @@
         
         
     <div class="book"
-        data-level="2.2"
-        data-chapter-title="Virtual DOM"
-        data-filepath="basics/02_virtual_dom.md"
+        data-level="3.5"
+        data-chapter-title="Events"
+        data-filepath="advanced/05_events.md"
         data-basepath=".."
         data-revision="Thu Aug 04 2016 16:55:20 GMT+0700 (+07)"
         data-innerlanguage="">
@@ -120,7 +120,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.2" data-path="basics/02_virtual_dom.html">
+        <li class="chapter " data-level="2.2" data-path="basics/02_virtual_dom.html">
             
                 
                     <a href="../basics/02_virtual_dom.html">
@@ -208,7 +208,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="advanced/05_events.html">
+        <li class="chapter active" data-level="3.5" data-path="advanced/05_events.html">
             
                 
                     <a href="../advanced/05_events.html">
@@ -289,57 +289,39 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="virtual-dom">Virtual DOM</h1>
-<p>Virtual DOM simplifies the way to manage DOM mutations, just describe how your component should look at any point in
-time and Virtual DOM reconciliation algorithm will make all necessary DOM operations to update component representation
-in a most efficient way.</p>
-<p>The basic Virtual DOM API that kivi provides is enough for most use cases. But when it isn&apos;t enough, kivi has many
-advanced tools that can reduce Virtual DOM diffing overhead, and it will be quite hard to beat its performance without
-reimplementing similar algorithms.</p>
-<h3 id="creating-virtual-dom-nodes">Creating Virtual DOM Nodes</h3>
-<p>Kivi has several simple functions to create virtual nodes:</p>
-<pre><code>// Creates a virtual node representing a HTML Element.
-function createVElement(tagName: string): VNode;
+                        <h1 id="events">Events</h1>
+<h2 id="event-delegation">Event Delegation</h2>
+<p>Event delegation is an old optimization technique and there are <a href="https://davidwalsh.name/event-delegate" target="_blank">many</a>
+<a href="https://learn.jquery.com/events/event-delegation/" target="_blank">good</a> explanations of this technique.</p>
+<p>Kivi provides several methods that can help writing delegated event handlers.</p>
+<p>Component descriptor method <code>createDelegatedEventHandler</code> returns a function that can be used as an event handler.</p>
+<p>First parameter is a selector that will be used to match the <code>target</code> element. Second parameter is a selector for a
+component&apos;s root element, it can be a string or a boolean value, if it is a boolean value and it is <code>true</code> then
+matching target will be used as a root element, if it is <code>false</code> then <code>currentTarget</code> element will be used as a root.
+Third parameter is an event handler that receives event, component, props and state params.</p>
+<p>Component&apos;s root element is required because we need to find reference to a component instance from this element, by
+default component instances aren&apos;t associated with root elements. To enable back references, component descriptors has
+a method <code>enableBackRef()</code>.</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">const</span> ClickableComponent = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">void</span>&gt;()
+  .enableBackRef()
+  .update((c, text) =&gt; {
+    c.sync(c.createVRoot().className(<span class="hljs-string">&quot;clickable&quot;</span>).children(text));
+  });
 
-// Creates a virtual node representing a SVG Element.
-function createVSvgElement(tagName: string): VNode;
+ClickableComponent.createDelegatedEventHandler(<span class="hljs-string">&quot;.clickable&quot;</span>, <span class="hljs-literal">true</span>, (e, c, text) =&gt; {
+  e.stopPropagation();
+  <span class="hljs-built_in">console</span>.log(`Clicked on ${text}`);
+});
 
-// Creates a virtual node representing a Text Node.
-function createVText(content: string): VNode;
-</code></pre><h3 id="setting-vnode-properties">Setting VNode properties</h3>
-<p>Virtual node instance has many different methods to set properties, all property methods support method chaining. For
-example:</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">const</span> e = createVElement(<span class="hljs-string">&quot;a&quot;</span>)
-  .attrs({
-    <span class="hljs-string">&quot;href&quot;</span>: <span class="hljs-string">&quot;localhost&quot;</span>,
-    <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Link to localhost&quot;</span>,
+<span class="hljs-keyword">const</span> Container = <span class="hljs-keyword">new</span> ComponentDescriptor&lt;<span class="hljs-built_in">string</span>[], <span class="hljs-built_in">void</span>&gt;()
+  .attached((c) =&gt; {
+    c.element.onclick = onClick;
   })
-  .children(<span class="hljs-string">&quot;Link to localhost&quot;</span>);
+  .update((c, items) =&gt; {
+    c.sync(c.createVRoot()
+      .children(items.map((i) =&gt; ClickableComonent.createVNode(i))));
+  })
 </code></pre>
-<p>List of basic properties:</p>
-<pre><code>VNode.attrs(attrs: {[key: string]: any}): VNode;
-VNode.props(props: {[key: string]: any}): VNode;
-VNode.style(style: string): VNode;
-VNode.className(className: string): VNode;
-VNode.children(children: VNode[]|string): VNode;
-</code></pre><h3 id="using-keys-to-preserve-identity">Using keys to preserve identity</h3>
-<p>To prevent from losing internal state of DOM elements and components, we should track nodes by some property. Virtual
-DOM reconciliation algorithm is using <code>key</code> property to find virtual nodes representing the same DOM node from
-the previous render.</p>
-<p>To enable tracking by keys, children property should be assigned with <code>VNode.trackByKeyChildren(children)</code> method. Each
-child should have a <code>key</code> property and it should be unique among its siblings. For example:</p>
-<pre><code class="lang-ts"><span class="hljs-keyword">const</span> container = createVElement(<span class="hljs-string">&quot;div&quot;</span>)
-  .trackByKeyChildren([
-    createVElement(<span class="hljs-string">&quot;span&quot;</span>).key(<span class="hljs-number">1</span>).children(<span class="hljs-string">&quot;1&quot;</span>),
-    createVElement(<span class="hljs-string">&quot;span&quot;</span>).key(<span class="hljs-number">2</span>).children(<span class="hljs-string">&quot;2&quot;</span>),
-    createVElement(<span class="hljs-string">&quot;span&quot;</span>).key(<span class="hljs-number">3</span>).children(<span class="hljs-string">&quot;3&quot;</span>),
-  ]);
-</code></pre>
-<p>To learn more about kivi children reconciliation algorithm, read
-<a href="https://github.com/localvoid/kivi/blob/569ba49acd7d5c8809cfc621eb02ec6206f0d3c9/lib/reconciler.ts#L410-L641" target="_blank">the comment</a>
-in the source code, it explains how kivi is able to find minimum number of DOM operations. This algorithm is highly
-optimized and runs really fast in most real world use cases, see <a href="https://localvoid.github.io/uibench/" target="_blank">uibench</a>
-benchmark to find out how kivi handles different use cases.</p>
 
                     
                     </section>
@@ -350,10 +332,10 @@ benchmark to find out how kivi handles different use cases.</p>
         </div>
 
         
-        <a href="../basics/01_components.html" class="navigation navigation-prev " aria-label="Previous page: Components"><i class="fa fa-angle-left"></i></a>
+        <a href="../advanced/04_virtual_dom.html" class="navigation navigation-prev " aria-label="Previous page: Virtual DOM"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../advanced/01_element_descriptor.html" class="navigation navigation-next " aria-label="Next page: Element Descriptor"><i class="fa fa-angle-right"></i></a>
+        <a href="../experimental/01_incremental_rendering.html" class="navigation navigation-next " aria-label="Next page: Incremental Rendering"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
